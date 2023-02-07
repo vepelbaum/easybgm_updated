@@ -1,6 +1,9 @@
 #' @import ggplot2 HDInterval qgraph BDgraph dplyr
 
 # Plot Structure probabilities
+#' @param output Output object from the extract_results function
+#' @param as.BF if TRUE plots the y-axis as Bayes factor instead of posterior structure probability
+#'
 #' @export
 plot_structure_probability <- function(output, as.BF = TRUE) {
 
@@ -36,6 +39,8 @@ plot_structure_probability <- function(output, as.BF = TRUE) {
 
 # ---------------------------------------------------------------------------------------------------------------
 # Plot structure complexity
+#' @param output Output object from the extract_results function
+#'
 #' @export
 plot_posteriorcomplexity <- function(output) {
   if (output$package == "rbinnet") {
@@ -197,56 +202,3 @@ plot_parameterforest <- function(output) {
           axis.title.x = element_text(size=16,face="bold"), plot.title = element_text(size = 18, face = "bold"))
 }
 
-# ---------------------------------------------------------------------------------------------------------------
-# Sigma samples
-#' @export
-plot_parameterdistribution <- function(output, parameter = "sigma"){
-
-  package <- output$package
-
-  if(is.null(output$samples_posterior)){
-    stop("Samples of the posterior distribution required. When extracting the results, set \"posterior_samples = TRUE\".")
-  }
-
-  sigma_samples <- output$samples_posterior
-  par(mfrow = c(2,2))
-
-  if(package=="BDgraph"){
-    for(index in 1:ncol(sigma_samples)){
-      plot(density(sigma_samples[, index]), main = colnames(sigma_samples)[index],
-           xlab = "Parameter Estimate", cex = 4, lwd = 1.2, bty = "n")
-    }
-  }
-
-  if(package!="BDgraph"){
-    if(parameter == "sigma") {
-      index_sigma <- grep('^s', colnames(sigma_samples))
-      for(index in index_sigma){
-        plot(density(sigma_samples[, index]), main = colnames(sigma_samples)[index],
-             xlab = "Parameter Estimate", cex = 4, lwd = 1.2, bty = "n")
-      }
-
-    } else if (parameter == "mu"){
-      index_mu <- grep('^m', colnames(sigma_samples))
-      for(index in index_mu){
-        plot(density(sigma_samples[, index]), main = colnames(sigma_samples)[index],
-             xlab = "Parameter Estimate", cex = 4, lwd = 1.2, bty = "n")
-      }
-
-    } else {
-      # Plot mu
-      index_mu <- grep('^m', colnames(sigma_samples))
-      for(index in index_mu){
-        plot(density(sigma_samples[, index]), main = colnames(sigma_samples)[index],
-             xlab = "Parameter Estimate", cex = 4, lwd = 1.2, bty = "n")
-      }
-
-      # Plot sigma
-      index_sigma <- grep('^s', colnames(sigma_samples))
-      for(index in index_sigma){
-        plot(density(sigma_samples[, index]), main = colnames(sigma_samples)[index],
-             xlab = "Parameter Estimate", cex = 4, lwd = 1.2, bty = "n")
-      }
-    }
-  }
-}
