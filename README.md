@@ -7,6 +7,7 @@ For more information on the Bayesian background, its application to networks and
 To download this package use
 
 ```r
+install.packages("remotes")
 library("remotes")
 install_github("KarolineHuth/easybgm")
 ```
