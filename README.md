@@ -4,7 +4,6 @@ The package helps extracting and visualizing the results of a Bayesian analysis 
 
 For more information on the Bayesian background, its application to networks and the respective plots, check out: Huth, K., de Ron, J., Luigjes, J., Goudriaan, A., Mohammadi, R., van Holst, R., Wagenmakers, E.J., \& Marsman, M. (2023, January 14). Bayesian Analysis of Cross-sectional Networks: A Tutorial in R and JASP. \textit{PsyArXiv} https://doi.org/10.31234/osf.io/ub5tc.
 
-methodology underlying 
 
 To download this package use
 
