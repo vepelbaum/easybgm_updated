@@ -1,4 +1,3 @@
-
 #' Extract results from a Bayesian analysis of networks
 #'
 #' @param fit fit object of the respective package used
@@ -9,8 +8,9 @@
 #' @param data if posterior_samples = T, provide the raw data used to estimate the network
 #'
 #' @export
+#' @import BDgraph dplyr
 #'
-extract_results <- function(fit, method, edge.prior = 0.5, package = "BDgraph", posterior_samples=F, not.cont=NULL, data=NULL){
+bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", posterior_samples=F, not.cont=NULL, data=NULL){
 
   # ----------------------------------------
   # Obtain the output

@@ -1,10 +1,14 @@
-#' @import ggplot2 HDInterval qgraph BDgraph dplyr
 
-# Plot Structure probabilities
-#' @param output Output object from the extract_results function
+
+#' Plot Posterior Structure Probabilities
+#'
+#' @param output Output object from the bgm_extract function
 #' @param as.BF if TRUE plots the y-axis as Bayes factor instead of posterior structure probability
 #'
 #' @export
+#' @import ggplot2
+#'
+
 plot_structure_probability <- function(output, as.BF = TRUE) {
 
   sorted_structure_prob <- as.data.frame(sort(output$structure_probabilities), decreasing=T)
@@ -38,10 +42,16 @@ plot_structure_probability <- function(output, as.BF = TRUE) {
 }
 
 # ---------------------------------------------------------------------------------------------------------------
-# Plot structure complexity
-#' @param output Output object from the extract_results function
+
+
+#' Plot posterior structure complexity
+#'
+#' @param output Output object from the bgm_extract function
 #'
 #' @export
+#' @import ggplot2
+#'
+
 plot_posteriorcomplexity <- function(output) {
   if (output$package == "rbinnet") {
     stop("Plot not implemented for rbinnet",
@@ -73,17 +83,19 @@ plot_posteriorcomplexity <- function(output) {
     )
 }
 
-# plot for edge inclusion BF
+# ---------------------------------------------------------------------------------------------------------------
+
 #' Edge evidence plot
 #'
-#' @param output Output object from the extract_results function
+#' @param output Output object from the bgm_extract function
 #' @param evidence_thresh BF which will be considered sufficient evidence for in-/exclusion
 #' @param layout Layout of the network; qgraph argument
 #' @param edge.width Layout of the network; qgraph argument
 #' @param split if TRUE, plot is split in included and excluded edges
-#' @param ... Additional qgraph arguments
+#' @param ... Additional `qgraph` arguments
 #'
 #' @export
+#' @import qgraph
 #'
 plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
 
@@ -131,15 +143,15 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
 }
 
 # ---------------------------------------------------------------------------------------------------------------
-# Plot median probability model
 
 #' Network plot
 #'
-#' @param output Output object from the extract_results function
+#' @param output Output object from the bgm_extract function
 #' @param exc_prob threshold for excluding edges; all edges with a lower inclusion probability will not be shown
-#' @param ... Additional qgraph arguments
+#' @param ... Additional `qgraph` arguments
 #'
 #' @export
+#' @import qgraph
 
 plot_network <- function(output, exc_prob = .5, ...) {
 
@@ -157,16 +169,15 @@ plot_network <- function(output, exc_prob = .5, ...) {
 }
 
 # ---------------------------------------------------------------------------------------------------------------
-# HDI plot
 
-#' Parameter forest plot of interaction parameters and 95% highest density intervals
+#' Plot of interaction parameters and their 95% highest density intervals
 #'
 #' @param output Output object from the extract_results function
 #'
 #' @export
+#' @import ggplot2 HDInterval
 #'
-#'
-plot_parameterforest <- function(output) {
+plot_parameterHDI <- function(output) {
 
   package <- output$package
   if(is.null(output$samples_posterior)){

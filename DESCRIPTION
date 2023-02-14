@@ -1,12 +1,12 @@
 Package: easybgm
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Extracting and Visualizing Bayesian Graphical Models
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Karoline Huth
+Maintainer: Karoline Huth <karoline.huth@gmail.com>
+Description: The package helps extracting and visualizing the results of a Bayesian analysis of networks commonly found in psychology. Until now it supports the extraction of cross-sectional network models fitted using `BDgraph` and `BGGM`. The package allows to extract the parameter estimates, posterior inclusion probability, inclusion Bayes factor and the posterior density of the parameters. In addition, for `BDgraph` it allows to assess and visualize the posterior probability of the structure space. 
+    For more information on the Bayesian background, its application to networks and the respective plots, check out: Huth, K., de Ron, J., Luigjes, J., Goudriaan, A., Mohammadi, R., van Holst, R., Wagenmakers, E.J., \& Marsman, M. (2023, January 14). Bayesian Analysis of Cross-sectional Networks: A Tutorial in R and JASP. \textit{PsyArXiv} https://doi.org/10.31234/osf.io/ub5tc.
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

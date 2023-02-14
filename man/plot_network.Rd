@@ -7,11 +7,11 @@
 plot_network(output, exc_prob = 0.5, ...)
 }
 \arguments{
-\item{output}{Output object from the extract_results function}
+\item{output}{Output object from the bgm_extract function}
 
 \item{exc_prob}{threshold for excluding edges; all edges with a lower inclusion probability will not be shown}
 
-\item{...}{Additional qgraph arguments}
+\item{...}{Additional \code{qgraph} arguments}
 }
 \description{
 Network plot

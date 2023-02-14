@@ -7,13 +7,13 @@
 plot_edgeevidence(output, evidence_thresh = 10, split = F, ...)
 }
 \arguments{
-\item{output}{Output object from the extract_results function}
+\item{output}{Output object from the bgm_extract function}
 
 \item{evidence_thresh}{BF which will be considered sufficient evidence for in-/exclusion}
 
 \item{split}{if TRUE, plot is split in included and excluded edges}
 
-\item{...}{Additional qgraph arguments}
+\item{...}{Additional \code{qgraph} arguments}
 
 \item{layout}{Layout of the network; qgraph argument}
 
