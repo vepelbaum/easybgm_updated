@@ -11,10 +11,10 @@
 
 plot_structure_probability <- function(output, as.BF = TRUE) {
 
-  sorted_structure_prob <- as.data.frame(sort(output$structure_probabilities), decreasing=T)
+  sorted_structure_prob <- as.data.frame(sort(output$structure_probabilities, decreasing=T))
   colnames(sorted_structure_prob) <- "posterior_prob"
   if(as.BF){
-    BF1s <- sorted_structure_prob$posterior_prob / sorted_structure_prob$posterior_prob[1] # BF best structure vs. others
+    BF1s <- sorted_structure_prob$posterior_prob[1] / sorted_structure_prob$posterior_prob # BF best structure vs. others
     data <- data.frame(structures = 1:length(BF1s), BayesFactor = BF1s)
     ggplot2::ggplot(data, aes(x = structures, y = BayesFactor)) +
       geom_point(size = 4, shape = 1) +
@@ -24,7 +24,7 @@ plot_structure_probability <- function(output, as.BF = TRUE) {
            y = expression(log(BF[1][s])))+
       geom_hline(yintercept = 1/10, linetype = "dashed", size = 1.5)  +
       theme(panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black", size = 1.1),
+            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black", linewidth = 1.1),
             axis.text = element_text(size = 14), axis.title = element_text(size = 16),
             axis.ticks.length = unit(.25, "cm"))
   } else {
@@ -35,7 +35,7 @@ plot_structure_probability <- function(output, as.BF = TRUE) {
       labs(x = "Structures",
            y = "Posterior Structure Probability")+
       theme(panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black", size = 1.1),
+            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black", linewidth = 1.1),
             axis.text = element_text(size = 14), axis.title = element_text(size = 16),
             axis.ticks.length = unit(.25, "cm"))
   }
