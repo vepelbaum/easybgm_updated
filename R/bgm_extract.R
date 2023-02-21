@@ -99,6 +99,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
     out_select <- BGGM::select(fit)
     bggm_res <- list()
     bggm_res$sigma <- out_select$pcor_mat
+    colnames(bggm_res$sigma) <- colnames(fit$Y)
     bggm_res$BF <- out_select$BF_10
     bggm_res$inc_probs <- out_select$BF_10/(out_select$BF_10 + 1)
     bggm_res$structure <- out_select$Adj_10
