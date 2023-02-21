@@ -103,9 +103,10 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
     bggm_res$BF <- out_select$BF_10
     bggm_res$inc_probs <- out_select$BF_10/(out_select$BF_10 + 1)
     bggm_res$structure <- out_select$Adj_10
-    p <- ncol(bggm_res$sigma)
+
     if(posterior_samples == TRUE){
-      samples <- matrix(0, ncol = p(p-1)/2, nrow = fit$iter)
+      p <- ncol(bggm_res$sigma)
+      samples <- matrix(0, ncol = p*(p-1)/2, nrow = fit$iter)
       for(i in 1:fit$iter){
         sample <- fit$post_samp$pcors[, , i]
         samples[i, ] <- as.vector(sample[upper.tri(sample)])

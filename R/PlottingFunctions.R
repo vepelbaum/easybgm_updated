@@ -222,7 +222,7 @@ plot_parameterHDI <- function(output) {
 
   ggplot2::ggplot(data = posterior, aes(x = names, y = posterior_medians, ymin = lower,
                                         ymax = upper)) +
-    geom_pointrange(position=position_dodge(width=c(0.3)), size = .5) +
+    geom_pointrange(position=position_dodge(width=c(0.3)), size = .3) +
     theme_bw() +
     coord_flip() +
     ylab("Highest Density Interval of Parameter")+
