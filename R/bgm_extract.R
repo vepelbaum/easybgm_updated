@@ -24,7 +24,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
       bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
       bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
       bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior /(1-edge.prior))
-      bdgraph_res$structure_bma <- 1*(bdgraph_res$inc_probs > 0.5)
+      bdgraph_res$structure <- 1*(bdgraph_res$inc_probs > 0.5)
       bdgraph_res$structure_probabilities <- fit$graph_weights/sum(fit$graph_weights)
       bdgraph_res$graph_weights <- fit$graph_weights
       bdgraph_res$sample_graph <- fit$sample_graphs
@@ -55,7 +55,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
       bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
       bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
       bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior/(1-edge.prior))
-      bdgraph_res$structure_bma <- 1*(bdgraph_res$inc_probs > 0.5)
+      bdgraph_res$structure <- 1*(bdgraph_res$inc_probs > 0.5)
       bdgraph_res$structure_probabilities <- fit$graph_weights/sum(fit$graph_weights)
       bdgraph_res$graph_weights <- fit$graph_weights
       bdgraph_res$sample_graph <- fit$sample_graphs
@@ -101,7 +101,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
     bggm_res$sigma <- out_select$pcor_mat
     bggm_res$BF <- out_select$BF_10
     bggm_res$inc_probs <- out_select$BF_10/(out_select$BF_10 + 1)
-    bggm_res$structure_bma <- out_select$Adj_10
+    bggm_res$structure <- out_select$Adj_10
     p <- ncol(bggm_res$sigma)
     if(posterior_samples == TRUE){
       samples <- matrix(0, ncol = p(p-1)/2, nrow = fit$iter)
@@ -126,7 +126,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
     diag(rbinnet_res$sigma) <- 0
     rbinnet_res$inc_probs <- vector2matrix(fit$parameters$inclusion_probabilities, fit$nodes)
     rbinnet_res$BF <- vector2matrix(fit$parameters$inc_BF, fit$nodes)
-    rbinnet_res$structure_bma <- 1*(rbinnet_res$inc_probs > 0.5)
+    rbinnet_res$structure <- 1*(rbinnet_res$inc_probs > 0.5)
     rbinnet_res$samples_posterior <- fit$parameters$sigma_samples
     rbinnet_res$package <- "rbinnet"
 

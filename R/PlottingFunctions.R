@@ -158,10 +158,31 @@ plot_network <- function(output, exc_prob = .5, ...) {
 
   graph <- output$sigma
 
-  # Exclude edges with a inclusion probability lower .5
+  # Exclude edges with a inclusion probability lower exc_prob
   inc_probs_m <- output$inc_probs
   graph[inc_probs_m < exc_prob] <- 0
   diag(graph) <- 1
+
+  # Plot
+  qgraph::qgraph(graph, ...)
+
+}
+
+# -------------------------------------------------
+
+#' Structure plot
+#'
+#' @param output Output object from the bgm_extract function
+#' @param ... Additional `qgraph` arguments
+#'
+#' @export
+#'
+#' @import qgraph
+#'
+
+plot_structure <- function(output, ...) {
+
+  graph <- output$structure
 
   # Plot
   qgraph::qgraph(graph, ...)
