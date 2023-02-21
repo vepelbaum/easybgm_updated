@@ -1,6 +1,6 @@
 #' Extract results from a Bayesian analysis of networks
 #'
-#' @param fit fit object of the respective package used
+#' @param fit fit object of the respective package used. Note for objects from the package 'BGGM', the package requires the input from explore(data)
 #' @param method type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising
 #' @param package package used to obtain the fit object
 #' @param posterior_samples binary indicating whether the posterior samples should be extracted
@@ -19,8 +19,8 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
     if(method %in% c("ggm")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
-      bdgraph_res$estimates_bma <- pr2pc(fit$K_hat)
-      diag(bdgraph_res$estimates_bma) <- 0
+      bdgraph_res$sigma <- pr2pc(fit$K_hat)
+      diag(bdgraph_res$sigma) <- 0
       bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
       bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
       bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior /(1-edge.prior))
@@ -50,8 +50,8 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
     if(method %in% c("gcgm")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
-      bdgraph_res$estimates_bma <- pr2pc(fit$K_hat)
-      diag(bdgraph_res$estimates_bma) <- 0
+      bdgraph_res$sigma <- pr2pc(fit$K_hat)
+      diag(bdgraph_res$sigma) <- 0
       bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
       bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
       bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior/(1-edge.prior))
@@ -95,10 +95,35 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
       output <- bdgraph_res
     }
   }
+  if(package == "BGGM") {
+    out_select <- BGGM::select(fit)
+    bggm_res <- list()
+    bggm_res$sigma <- out_select$pcor_mat
+    bggm_res$BF <- out_select$BF_10
+    bggm_res$inc_probs <- out_select$BF_10/(out_select$BF_10 + 1)
+    bggm_res$structure_bma <- out_select$Adj_10
+    p <- ncol(bggm_res$sigma)
+    if(posterior_samples == TRUE){
+      samples <- matrix(0, ncol = p(p-1)/2, nrow = fit$iter)
+      for(i in 1:fit$iter){
+        sample <- fit$post_samp$pcors[, , i]
+        samples[i, ] <- as.vector(sample[upper.tri(sample)])
+      }
+      bggm_res$samples_posterior <- samples
+    }
+    bggm_res$package <- "BGGM"
+    if(fit$type == "continuous"){
+      bggm_res$model <- "ggm"
+    } else {
+      bggm_res$model <- "gcgm"
+    }
+
+    output <- bggm_res
+  }
   if(package == "rbinnet" & method == "Ising"){
     rbinnet_res <- list()
-    rbinnet_res$estimates_bma <- vector2matrix(fit$parameters$sigma_eap, fit$nodes)
-    diag(rbinnet_res$estimates_bma) <- 0
+    rbinnet_res$sigma <- vector2matrix(fit$parameters$sigma_eap, fit$nodes)
+    diag(rbinnet_res$sigma) <- 0
     rbinnet_res$inc_probs <- vector2matrix(fit$parameters$inclusion_probabilities, fit$nodes)
     rbinnet_res$BF <- vector2matrix(fit$parameters$inc_BF, fit$nodes)
     rbinnet_res$structure_bma <- 1*(rbinnet_res$inc_probs > 0.5)

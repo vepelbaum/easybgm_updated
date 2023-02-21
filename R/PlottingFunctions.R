@@ -9,7 +9,7 @@
 #' @import ggplot2
 #'
 
-plot_structure_probability <- function(output, as.BF = TRUE) {
+plot_structure_probability <- function(output, as.BF = FALSE) {
 
   sorted_structure_prob <- as.data.frame(sort(output$structure_probabilities, decreasing=T))
   colnames(sorted_structure_prob) <- "posterior_prob"
@@ -110,7 +110,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
   if(split == F){
     graph[output$inc_probs <= 1] <- 1
     diag(graph) <- 1
-    colnames(graph) <- colnames(output$estimates_bma)
+    colnames(graph) <- colnames(output$sigma)
     qgraph::qgraph(graph,
                    edge.color = graph_color, # specifies the color of the edges
                    ...
@@ -123,7 +123,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
     graph_inc[output$inc_probs >= .5] <- 1
     graph_inc[output$inc_probs < .5] <- 0
     diag(graph_inc) <- 1
-    colnames(graph_inc) <- colnames(output$estimates_bma)
+    colnames(graph_inc) <- colnames(output$sigma)
     qgraph::qgraph(graph_inc,
                    edge.color = graph_color, # specifies the color of the edges
                    ...
@@ -132,7 +132,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
     graph_exc[output$inc_probs >= .5] <- 0
     graph_exc[output$inc_probs < .5] <- 1
     diag(graph_exc) <- 1
-    colnames(graph_exc) <- colnames(output$estimates_bma)
+    colnames(graph_exc) <- colnames(output$sigma)
     qgraph::qgraph(graph_exc,
                    edge.color = graph_color, # specifies the color of the edges
                    ...
@@ -156,7 +156,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
 plot_network <- function(output, exc_prob = .5, ...) {
 
 
-  graph <- output$estimates_bma
+  graph <- output$sigma
 
   # Exclude edges with a inclusion probability lower .5
   inc_probs_m <- output$inc_probs
@@ -187,8 +187,8 @@ plot_parameterHDI <- function(output) {
   hdi_intervals <- as.data.frame(apply(output$samples_posterior, MARGIN = 2, FUN = hdi))
   posterior_medians <- apply(output$samples_posterior, MARGIN = 2, FUN = median)
 
-  names <- colnames(output$estimates_bma)
-  combinations <- combn(nrow(output$estimates_bma), 2)
+  names <- colnames(output$sigma)
+  combinations <- combn(nrow(output$sigma), 2)
   index <- vector(length = ncol(combinations))
   for(i in 1:ncol(combinations)) index[i] <- paste0(names[combinations[1, i]],"-",names[combinations[2, i]])
 

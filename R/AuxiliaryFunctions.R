@@ -54,7 +54,6 @@ extract_posterior <- function(fit, data, method = c("ggm", "gcgm"), not.cont){
     G <- string2graph(fit$sample_graphs[graph_ix], p)
     K <- BDgraph::rgwish(n=1, adj=G, b=3+n, D=diag(p) + S)
 
-    #Rs[j,,] <- pr2pc(K)
     Rs[j,] <- as.vector(pr2pc(K)[upper.tri(pr2pc(K))])
     densities[j] <- sum(sum(G)) / (p*(p-1))
     j <- j + 1

@@ -15,7 +15,7 @@ bgm_extract(
 )
 }
 \arguments{
-\item{fit}{fit object of the respective package used}
+\item{fit}{fit object of the respective package used. Note for objects from the package 'BGGM', the package requires the input from explore(data)}
 
 \item{method}{type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising}
 

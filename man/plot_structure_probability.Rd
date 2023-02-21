@@ -4,7 +4,7 @@
 \alias{plot_structure_probability}
 \title{Plot Posterior Structure Probabilities}
 \usage{
-plot_structure_probability(output, as.BF = TRUE)
+plot_structure_probability(output, as.BF = FALSE)
 }
 \arguments{
 \item{output}{Output object from the bgm_extract function}
