@@ -11,7 +11,8 @@ bgm_extract(
   package = "BDgraph",
   posterior_samples = F,
   not.cont = NULL,
-  data = NULL
+  data = NULL,
+  centrality = F
 )
 }
 \arguments{

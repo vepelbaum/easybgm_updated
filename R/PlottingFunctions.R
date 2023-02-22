@@ -99,6 +99,10 @@ plot_posteriorcomplexity <- function(output) {
 #'
 plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
 
+  if(output$model == "dgm-binary"){
+    stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates.",
+         call. = FALSE)
+  }
   graph <- output$BF
   diag(graph) <- 1
 
@@ -154,7 +158,10 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
 #' @import qgraph
 
 plot_network <- function(output, exc_prob = .5, ...) {
-
+  if(output$model == "dgm-binary"){
+    stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates.",
+         call. = FALSE)
+  }
 
   graph <- output$sigma
 

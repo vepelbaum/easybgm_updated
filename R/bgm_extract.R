@@ -10,7 +10,7 @@
 #' @export
 #' @import BDgraph dplyr
 #'
-bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", posterior_samples=F, not.cont=NULL, data=NULL){
+bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", posterior_samples=F, not.cont=NULL, data=NULL, centrality =F){
 
   # ----------------------------------------
   # Obtain the output
@@ -31,6 +31,10 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
       bdgraph_res$package <- "BDgraph"
       bdgraph_res$model <- "ggm"
 
+      if(centrality == TRUE){
+        posterior_samples <- TRUE
+      }
+
       if(posterior_samples == TRUE){
         if(is.null(data)){
           stop("Provide the raw data with the \"data\" argument",
@@ -39,9 +43,13 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
         # Extract posterior samples
         data<-as.matrix(data)
         bdgraph_res$samples_posterior <- extract_posterior(fit, data=data, method = method, not.cont)[[1]]
-        # Centrality indices
-        bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
-        bdgraph_res$centrality <- centrality(bdgraph_res)
+
+        if(centrality == TRUE){
+          # Centrality indices
+          bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
+          bdgraph_res$centrality <- centrality(bdgraph_res)
+        }
+
       }
 
       output <- bdgraph_res
@@ -62,6 +70,9 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
       bdgraph_res$package <- "BDgraph"
       bdgraph_res$model <- "gcgm"
 
+      if(centrality == TRUE){
+        posterior_samples <- TRUE
+      }
       if(posterior_samples == TRUE){
         if(is.null(not.cont)){
           stop("Specify a vector indicating variables are continuos with the not.cont argument (1 indicates not continuous)",
@@ -74,9 +85,12 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
         data<-as.matrix(data)
         # Extract posterior samples
         bdgraph_res$samples_posterior <- extract_posterior(fit, data, method = method, not.cont = not.cont)[[1]]
+
+        if(centrality == TRUE){
         # Centrality indices
         bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
         bdgraph_res$centrality <- centrality(bdgraph_res)
+        }
       }
       output <- bdgraph_res
     }
@@ -104,6 +118,9 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
     bggm_res$inc_probs <- out_select$BF_10/(out_select$BF_10 + 1)
     bggm_res$structure <- out_select$Adj_10
 
+    if(centrality == TRUE){
+      posterior_samples <- TRUE
+    }
     if(posterior_samples == TRUE){
       p <- ncol(bggm_res$sigma)
       samples <- matrix(0, ncol = p*(p-1)/2, nrow = fit$iter)
@@ -112,6 +129,11 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
         samples[i, ] <- as.vector(sample[upper.tri(sample)])
       }
       bggm_res$samples_posterior <- samples
+
+      if(centrality == TRUE){
+        bggm_res$centrality_strength <- centrality_strength(bggm_res)
+        bggm_res$centrality <- centrality(bggm_res)
+      }
     }
     bggm_res$package <- "BGGM"
     if(fit$type == "continuous"){
