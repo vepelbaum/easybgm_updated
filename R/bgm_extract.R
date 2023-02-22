@@ -3,9 +3,10 @@
 #' @param fit fit object of the respective package used. Note for objects from the package 'BGGM', the package requires the input from explore(data)
 #' @param method type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising
 #' @param package package used to obtain the fit object
-#' @param posterior_samples binary indicating whether the posterior samples should be extracted
+#' @param posterior_samples if TRUE, the posterior samples will be extracted
 #' @param not.cont only if method = "gcgm" vector indicating the not-continuous variables
 #' @param data if posterior_samples = T, provide the raw data used to estimate the network
+#' @param centrality if TRUE, the centrality samples will be extracted
 #'
 #' @export
 #' @import BDgraph dplyr

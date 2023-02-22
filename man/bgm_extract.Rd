@@ -22,11 +22,13 @@ bgm_extract(
 
 \item{package}{package used to obtain the fit object}
 
-\item{posterior_samples}{binary indicating whether the posterior samples should be extracted}
+\item{posterior_samples}{if TRUE, the posterior samples will be extracted}
 
 \item{not.cont}{only if method = "gcgm" vector indicating the not-continuous variables}
 
 \item{data}{if posterior_samples = T, provide the raw data used to estimate the network}
+
+\item{centrality}{if TRUE, the centrality samples will be extracted}
 }
 \description{
 Extract results from a Bayesian analysis of networks
