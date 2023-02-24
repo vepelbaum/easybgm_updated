@@ -10,6 +10,14 @@
 #'
 
 plot_structure_probability <- function(output, as.BF = FALSE) {
+  if (output$package == "rbinnet") {
+    stop("The plot cannot be obtained for rbinnet.",
+         call. = FALSE)
+  }
+  if (output$package == "BGGM") {
+    stop("The plot cannot be obtained for BGGM.",
+         call. = FALSE)
+  }
 
   sorted_structure_prob <- as.data.frame(sort(output$structure_probabilities, decreasing=T))
   colnames(sorted_structure_prob) <- "posterior_prob"
@@ -54,7 +62,11 @@ plot_structure_probability <- function(output, as.BF = FALSE) {
 
 plot_posteriorcomplexity <- function(output) {
   if (output$package == "rbinnet") {
-    stop("Plot not implemented for rbinnet",
+    stop("The plot cannot be obtained for rbinnet.",
+         call. = FALSE)
+  }
+  if (output$package == "BGGM") {
+    stop("The plot cannot be obtained for BGGM.",
          call. = FALSE)
   }
   complexity <- c()
@@ -100,7 +112,7 @@ plot_posteriorcomplexity <- function(output) {
 plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
 
   if(output$model == "dgm-binary"){
-    stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates.",
+    stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates for the Ising model.",
          call. = FALSE)
   }
   graph <- output$BF
@@ -200,7 +212,7 @@ plot_structure <- function(output, ...) {
 
 #' Plot of interaction parameters and their 95% highest density intervals
 #'
-#' @param output Output object from the extract_results function
+#' @param output Output object from the bgm_extract function
 #'
 #' @export
 #' @import ggplot2 HDInterval
@@ -239,5 +251,60 @@ plot_parameterHDI <- function(output) {
           axis.line = element_line(colour = "black", size = 1.1), axis.ticks.length=unit(.2, "cm"),
           axis.ticks = element_line(size= .8),
           axis.title.x = element_text(size=16,face="bold"), plot.title = element_text(size = 18, face = "bold"))
+}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Centrality plot
+
+#' Plot centrality measures and 95% highest density interval
+#'
+#' @param output Output object from the bgm_extract function
+#' @param measure Centrality measures that should be plotted. Users can choose "all" or a subsection of the list: "Strength", "Closeness", "Betweenness", or "ExpectedInfluence"
+#'
+#' @export
+#'
+
+plot_centrality <- function(output, measure = "Strength"){
+  cent_samples <- output$centrality
+  p <- ncol(output$sigma)
+  rownames(cent_samples) <- NULL
+  # Creating summary statistics
+
+  centrality_means <- cent_samples %>%
+    as_tibble() %>%
+    group_by(Centrality) %>%
+    group_modify(~ as.data.frame(colMeans(.x)))
+  centrality_means <- cbind(centrality_means, rep(colnames(output$sigma), 4))
+  colnames(centrality_means)[2:3] <- c("value", "node")
+  centrality_means <- centrality_means[order(centrality_means$Centrality, centrality_means$node), ]
+  centrality_hdi <- cent_samples %>%
+    as_tibble() %>%
+    group_by(Centrality) %>%
+    group_modify(~ as.data.frame(hdi(.x, allowSplit = F)))
+  centrality_hdi <- centrality_hdi %>%
+    gather(node, value, stress:uncreative) %>%
+    add_column(interval = rep(c("lower", "upper"), p*4)) %>%
+    spread(interval, value)
+
+  centrality_summary <- merge(centrality_hdi, centrality_means, all = T)
+
+  measure_options <- c("all", "Betweenness", "Closeness", "ExpectedInfluence", "Strength")
+  if((measure %in% measure_options) == FALSE) {
+    stop("This centrality measure cannot be plotted. Please choose one or several of the following measures: Betweenness, Closeness, ExpectedInfluence, Strength.")
+  }
+  if(measure == "all"){
+    measure <- c("Betweenness", "Closeness", "ExpectedInfluence", "Strength")
+  }
+  centrality_summary %>%
+    filter(Centrality %in% measure) %>%
+    ggplot(aes(x = node, y=value, group = Centrality))+
+    geom_line()+
+    geom_point()+
+    geom_errorbar(aes(y= value, ymin =lower, ymax = upper), size = .5, width = 0.4)+
+    facet_wrap(.~ Centrality, ncol = 4, scales = "free_x") +
+    coord_flip() +
+    ylab("Value") +
+    xlab("Nodes")
 }
 

@@ -7,7 +7,7 @@
 plot_parameterHDI(output)
 }
 \arguments{
-\item{output}{Output object from the extract_results function}
+\item{output}{Output object from the bgm_extract function}
 }
 \description{
 Plot of interaction parameters and their 95\% highest density intervals

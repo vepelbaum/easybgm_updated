@@ -3,10 +3,10 @@
 #' @param fit fit object of the respective package used. Note for objects from the package 'BGGM', the package requires the input from explore(data)
 #' @param method type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising
 #' @param package package used to obtain the fit object
-#' @param posterior_samples if TRUE, the posterior samples will be extracted
+#' @param posterior_samples if TRUE, the posterior samples will be extracted. Note will significantly increase the computation time for 'BDgraph'.
 #' @param not.cont only if method = "gcgm" vector indicating the not-continuous variables
 #' @param data if posterior_samples = T, provide the raw data used to estimate the network
-#' @param centrality if TRUE, the centrality samples will be extracted
+#' @param centrality if TRUE, the centrality samples will be extracted. Note will significantly increase the computation time.
 #'
 #' @export
 #' @import BDgraph dplyr
@@ -47,7 +47,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
 
         if(centrality == TRUE){
           # Centrality indices
-          bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
+          #bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
           bdgraph_res$centrality <- centrality(bdgraph_res)
         }
 
@@ -89,7 +89,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
 
         if(centrality == TRUE){
         # Centrality indices
-        bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
+        # bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
         bdgraph_res$centrality <- centrality(bdgraph_res)
         }
       }
@@ -132,7 +132,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
       bggm_res$samples_posterior <- samples
 
       if(centrality == TRUE){
-        bggm_res$centrality_strength <- centrality_strength(bggm_res)
+        # bggm_res$centrality_strength <- centrality_strength(bggm_res)
         bggm_res$centrality <- centrality(bggm_res)
       }
     }
