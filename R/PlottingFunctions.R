@@ -228,9 +228,9 @@ plot_parameterHDI <- function(output) {
   posterior_medians <- apply(output$samples_posterior, MARGIN = 2, FUN = median)
 
   names <- colnames(output$sigma)
-  combinations <- combn(nrow(output$sigma), 2)
-  index <- vector(length = ncol(combinations))
-  for(i in 1:ncol(combinations)) index[i] <- paste0(names[combinations[1, i]],"-",names[combinations[2, i]])
+  names_bycol <- matrix(rep(names, each = ncol(output$sigma)), ncol = ncol(output$sigma))
+  names_byrow <- matrix(rep(names, each = ncol(output$sigma)), ncol = ncol(output$sigma), byrow = T)
+  index <- matrix(paste0(names_byrow, "-", names_bycol), ncol = ncol(output$sigma))
 
   posterior <- cbind(data.frame(posterior_medians, row.names = NULL),
                      data.frame(t(hdi_intervals), row.names = NULL), index)
@@ -238,6 +238,7 @@ plot_parameterHDI <- function(output) {
   posterior <- posterior[order(posterior$posterior_medians, decreasing = F),]
   posterior$names <- factor(posterior$names, levels = posterior$names)
 
+  # NOTE:::: THE ORDER OF THE NAMING IN THE PLOT IS NOT IN THE RIGHT ORDER
 
   ggplot2::ggplot(data = posterior, aes(x = names, y = posterior_medians, ymin = lower,
                                         ymax = upper)) +
