@@ -220,6 +220,9 @@ plot_structure <- function(output, ...) {
 plot_parameterHDI <- function(output) {
 
   package <- output$package
+  if(output$package == "BDgraph" & output$model == "gcgm"){
+    stop("Plot cannot be obtained for GCGMs.")
+  }
   if(is.null(output$samples_posterior)){
     stop("Samples of the posterior distribution required. When extracting the results, set \"posterior_samples = TRUE\".")
   }
@@ -230,7 +233,8 @@ plot_parameterHDI <- function(output) {
   names <- colnames(output$sigma)
   names_bycol <- matrix(rep(names, each = ncol(output$sigma)), ncol = ncol(output$sigma))
   names_byrow <- matrix(rep(names, each = ncol(output$sigma)), ncol = ncol(output$sigma), byrow = T)
-  index <- matrix(paste0(names_byrow, "-", names_bycol), ncol = ncol(output$sigma))
+  names_comb <- matrix(paste0(names_byrow, "-", names_bycol), ncol = ncol(output$sigma))
+  index <- names_comb[upper.tri(names_comb)]
 
   posterior <- cbind(data.frame(posterior_medians, row.names = NULL),
                      data.frame(t(hdi_intervals), row.names = NULL), index)
@@ -238,7 +242,6 @@ plot_parameterHDI <- function(output) {
   posterior <- posterior[order(posterior$posterior_medians, decreasing = F),]
   posterior$names <- factor(posterior$names, levels = posterior$names)
 
-  # NOTE:::: THE ORDER OF THE NAMING IN THE PLOT IS NOT IN THE RIGHT ORDER
 
   ggplot2::ggplot(data = posterior, aes(x = names, y = posterior_medians, ymin = lower,
                                         ymax = upper)) +
