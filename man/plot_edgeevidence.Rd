@@ -4,7 +4,13 @@
 \alias{plot_edgeevidence}
 \title{Edge evidence plot}
 \usage{
-plot_edgeevidence(output, evidence_thresh = 10, split = F, ...)
+plot_edgeevidence(
+  output,
+  evidence_thresh = 10,
+  split = F,
+  show = c("included", "inconclusive", "excluded"),
+  ...
+)
 }
 \arguments{
 \item{output}{Output object from the bgm_extract function}
@@ -13,11 +19,9 @@ plot_edgeevidence(output, evidence_thresh = 10, split = F, ...)
 
 \item{split}{if TRUE, plot is split in included and excluded edges}
 
+\item{show}{specifies which edges should be shown, indicated by "included", "inconclusive", "excluded"}
+
 \item{...}{Additional \code{qgraph} arguments}
-
-\item{layout}{Layout of the network; qgraph argument}
-
-\item{edge.width}{Layout of the network; qgraph argument}
 }
 \description{
 Edge evidence plot

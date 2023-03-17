@@ -101,15 +101,14 @@ plot_posteriorcomplexity <- function(output) {
 #'
 #' @param output Output object from the bgm_extract function
 #' @param evidence_thresh BF which will be considered sufficient evidence for in-/exclusion
-#' @param layout Layout of the network; qgraph argument
-#' @param edge.width Layout of the network; qgraph argument
 #' @param split if TRUE, plot is split in included and excluded edges
+#' @param show specifies which edges should be shown, indicated by "included", "inconclusive", "excluded"
 #' @param ... Additional `qgraph` arguments
 #'
 #' @export
 #' @import qgraph
 #'
-plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
+plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c("included", "inconclusive", "excluded"), ...) {
 
   if(output$model == "dgm-binary"){
     stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates for the Ising model.",
@@ -123,37 +122,56 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, ...) {
   graph_color <-  ifelse(graph < evidence_thresh & graph > 1/evidence_thresh, graph_color <- "#bfbfbf", graph_color <- "#36648b")
   graph_color[graph < (1/evidence_thresh)] <- "#990000"
 
-  if(split == F){
-    graph[output$inc_probs <= 1] <- 1
-    diag(graph) <- 1
-    colnames(graph) <- colnames(output$sigma)
-    qgraph::qgraph(graph,
-                   edge.color = graph_color, # specifies the color of the edges
-                   ...
-    )
-  }
-  if(split==T){
-    par(mfrow=c(1, 2))
-    graph_inc <- graph_exc <- graph
-    # plot included graph
-    graph_inc[output$inc_probs >= .5] <- 1
-    graph_inc[output$inc_probs < .5] <- 0
-    diag(graph_inc) <- 1
-    colnames(graph_inc) <- colnames(output$sigma)
-    qgraph::qgraph(graph_inc,
-                   edge.color = graph_color, # specifies the color of the edges
-                   ...
-    )
-    # Plot excluded graph
-    graph_exc[output$inc_probs >= .5] <- 0
-    graph_exc[output$inc_probs < .5] <- 1
-    diag(graph_exc) <- 1
-    colnames(graph_exc) <- colnames(output$sigma)
-    qgraph::qgraph(graph_exc,
-                   edge.color = graph_color, # specifies the color of the edges
-                   ...
-    )
-    par(mfrow=c(1, 1))
+  if(show == c("included", "inconclusive", "excluded")){
+    if(split == F){
+      graph[output$inc_probs <= 1] <- 1
+      diag(graph) <- 1
+      colnames(graph) <- colnames(output$sigma)
+      qgraph::qgraph(graph,
+                     edge.color = graph_color, # specifies the color of the edges
+                     ...
+      )
+    }
+    if(split==T){
+      graph_inc <- graph_exc <- graph
+      # plot included graph
+      graph_inc[output$inc_probs >= .5] <- 1
+      graph_inc[output$inc_probs < .5] <- 0
+      diag(graph_inc) <- 1
+      colnames(graph_inc) <- colnames(output$sigma)
+      qgraph::qgraph(graph_inc,
+                     edge.color = graph_color, # specifies the color of the edges
+                     ...
+      )
+      # Plot excluded graph
+      graph_exc[output$inc_probs >= .5] <- 0
+      graph_exc[output$inc_probs < .5] <- 1
+      diag(graph_exc) <- 1
+      colnames(graph_exc) <- colnames(output$sigma)
+      qgraph::qgraph(graph_exc,
+                     edge.color = graph_color, # specifies the color of the edges
+                     ...
+      )
+    }
+    if(length(show) != 3){
+      graph_show <- graph
+      graph_show <- 0
+      if("included" %in% show){
+        graph_show[output$BF > evidence_thresh] <- 1
+      }
+      if("excluded" %in% show){
+        graph_show[output$BF < (1/evidence_thresh)] <- 1
+      }
+      if("inconclusive" %in% show){
+        graph_show[output$BF > (1/evidence_thresh) & output$BF < evidence_thresh] <- 1
+      }
+      diag(graph_show) <- 1
+      colnames(graph_show) <- colnames(output$sigma)
+      qgraph::qgraph(graph_show,
+                     edge.color = graph_color, # specifies the color of the edges
+                     ...
+      )
+    }
   }
 
 }
