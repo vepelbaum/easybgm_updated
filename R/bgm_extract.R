@@ -1,7 +1,7 @@
 #' Extract results from a Bayesian analysis of networks
 #'
 #' @param fit fit object of the respective package used. Note for objects from the package 'BGGM', the package requires the input from explore(data)
-#' @param method type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising
+#' @param model type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising, ordinal
 #' @param package package used to obtain the fit object
 #' @param posterior_samples if TRUE, the posterior samples will be extracted. Note will significantly increase the computation time for 'BDgraph'.
 #' @param not.cont only if method = "gcgm" vector indicating the not-continuous variables
@@ -11,12 +11,16 @@
 #' @export
 #' @import BDgraph dplyr
 #'
-bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", posterior_samples=F, not.cont=NULL, data=NULL, centrality =F){
+bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_samples=F, not.cont=NULL, data=NULL, centrality =F){
 
   # ----------------------------------------
   # Obtain the output
   # ----------------------------------------
   if(package=="BDgraph"){
+    if(is.null(model)){
+      stop("Please specify the type of model estimated with BDgraph (e.g., ggm, gcgm, dgm-binary).",
+           call. = FALSE)
+    }
     if(method %in% c("ggm")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
@@ -75,7 +79,7 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
         posterior_samples <- TRUE
       }
       if(posterior_samples == TRUE){
-          stop("Posterior samples cannot be extracted for GCGMs at the moment.")
+        stop("Posterior samples cannot be extracted for GCGMs at the moment.")
 
         # if(is.null(not.cont)){
         #   stop("Specify a vector indicating variables are continuos with the not.cont argument (1 indicates not continuous)",
@@ -147,22 +151,36 @@ bgm_extract <- function(fit, method, edge.prior = 0.5, package = "BDgraph", post
 
     output <- bggm_res
   }
-  if(package == "rbinnet" & method == "Ising"){
-    rbinnet_res <- list()
-    rbinnet_res$sigma <- vector2matrix(fit$parameters$sigma_eap, fit$nodes)
-    diag(rbinnet_res$sigma) <- 0
-    rbinnet_res$inc_probs <- vector2matrix(fit$parameters$inclusion_probabilities, fit$nodes)
-    rbinnet_res$BF <- vector2matrix(fit$parameters$inc_BF, fit$nodes)
-    rbinnet_res$structure <- 1*(rbinnet_res$inc_probs > 0.5)
-    rbinnet_res$samples_posterior <- fit$parameters$sigma_samples
-    rbinnet_res$package <- "rbinnet"
+  if(package == "bgms"){
+    bgms_res <- list()
+    if(ncol(fit$interactions) == nrow(fit$interactions)){
+      if(posterior_samples == TRUE){
+        stop("The fit object does not contain the posterior samples of bgms. Please re-run the bgm function and set save=TRUE.")}
+      if(centrality == TRUE){
+        stop("The centrality measures cannot be obtained as the fit object does not contain the posterior samples of bgms that are needed for the computation. Please re-run the bgm function and set save=TRUE.")}
 
-    # Centrality indices
-    rbinnet_res$centrality_strength <- centrality_strength(rbinnet_res)
-    if(centrality_samples == TRUE){
-      rbinnet_res$centrality <- centrality(rbinnet_res)
+      bgms_res$sigma <- fit$interactions
+      bgms_res$inc_probs <- fit$gamma
+      bgms_res$BF <- fit$gamma/(1-fit$gamma)
+      bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
     }
-    output <- rbinnet_res
+    if(ncol(fit$interactions) != nrow(fit$interactions)){
+      bgms_res$sigma <- colMeans(fit$interactions)
+      bgms_res$inc_probs <- colMeans(fit$gamma)
+      bgms_res$BF <- bgms_res$inc_probs/(1-bgms_res$inc_probs)
+      bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
+      if(posterior_samples == TRUE){
+        bgms_res$samples_posterior <- fit$interactions
+      }
+      if(centrality == TRUE){
+        #bgms_res$centrality_strength <- centrality_strength(bgms_res)
+        bgms_res$centrality <- centrality(bgms_res)
+      }
+    }
+
+
+    bgms_res$package <- "bgms"
+    output <- bgms_res
   }
 
   return(output)

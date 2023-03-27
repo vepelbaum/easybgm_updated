@@ -6,9 +6,9 @@
 \usage{
 bgm_extract(
   fit,
-  method,
+  package,
+  model = NULL,
   edge.prior = 0.5,
-  package = "BDgraph",
   posterior_samples = F,
   not.cont = NULL,
   data = NULL,
@@ -18,9 +18,9 @@ bgm_extract(
 \arguments{
 \item{fit}{fit object of the respective package used. Note for objects from the package 'BGGM', the package requires the input from explore(data)}
 
-\item{method}{type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising}
-
 \item{package}{package used to obtain the fit object}
+
+\item{model}{type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising, ordinal}
 
 \item{posterior_samples}{if TRUE, the posterior samples will be extracted. Note will significantly increase the computation time for 'BDgraph'.}
 

@@ -122,7 +122,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
   graph_color <-  ifelse(graph < evidence_thresh & graph > 1/evidence_thresh, graph_color <- "#bfbfbf", graph_color <- "#36648b")
   graph_color[graph < (1/evidence_thresh)] <- "#990000"
 
-  if(show == c("included", "inconclusive", "excluded")){
+  if(length(show) == 3){
     if(split == F){
       graph[output$inc_probs <= 1] <- 1
       diag(graph) <- 1
@@ -182,14 +182,16 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
 #'
 #' @param output Output object from the bgm_extract function
 #' @param exc_prob threshold for excluding edges; all edges with a lower inclusion probability will not be shown
+#' @param dashed binary parameter indicating whether edges with inconclusive evidence should be dashed
 #' @param ... Additional `qgraph` arguments
+
 #'
 #' @export
 #' @import qgraph
 
-plot_network <- function(output, exc_prob = .5, ...) {
+plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
   if(output$model == "dgm-binary"){
-    stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates.",
+    stop("Plot cannot be obtained for 'dgm-binary' models. Use the package bgms instead to obtain parameter estimates.",
          call. = FALSE)
   }
 
@@ -201,7 +203,14 @@ plot_network <- function(output, exc_prob = .5, ...) {
   diag(graph) <- 1
 
   # Plot
-  qgraph::qgraph(graph, ...)
+  if(dashed == T){
+    graph_dashed <- ifelse(output$BF < 10, "dashed", "solid")
+    qgraph::qgraph(graph, lty = graph_dashed, ...)
+  } else {
+    qgraph::qgraph(graph, ...)
+  }
+
+
 
 }
 
