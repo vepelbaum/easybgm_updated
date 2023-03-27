@@ -9,10 +9,9 @@
 #' @import ggplot2
 #'
 
-plot_structure_probability <- function(output, as.BF = FALSE) {
-  if (output$package == "rbinnet") {
-    stop("The plot cannot be obtained for rbinnet.",
-         call. = FALSE)
+plot_posteriorstructure <- function(output, as.BF = FALSE) {
+  if(class(output) != "easybgm"){
+    stop("Wrong output type provided. Function requires output of easybgm extract function.")
   }
   if (output$package == "BGGM") {
     stop("The plot cannot be obtained for BGGM.",
@@ -61,9 +60,8 @@ plot_structure_probability <- function(output, as.BF = FALSE) {
 #'
 
 plot_posteriorcomplexity <- function(output) {
-  if (output$package == "rbinnet") {
-    stop("The plot cannot be obtained for rbinnet.",
-         call. = FALSE)
+  if(class(output) != "easybgm"){
+    stop("Wrong output type provided. Function requires output of easybgm extract function.")
   }
   if (output$package == "BGGM") {
     stop("The plot cannot be obtained for BGGM.",
@@ -71,10 +69,10 @@ plot_posteriorcomplexity <- function(output) {
   }
   complexity <- c()
   for(i in 1:length(output$sample_graph)){
-    complexity[i] <- sum(as.numeric(unlist(strsplit(res$sample_graph[i], ""))))
+    complexity[i] <- sum(as.numeric(unlist(strsplit(output$sample_graph[i], ""))))
   }
 
-  data_complexity <- tibble(complexity, weights = res$graph_weights)  %>%
+  data_complexity <- tibble(complexity, weights = output$graph_weights)  %>%
     group_by(complexity) %>%
     summarise(complexity_weight = sum(weights)) %>%
     mutate(complexity_weight = complexity_weight/sum(complexity_weight))
@@ -109,7 +107,9 @@ plot_posteriorcomplexity <- function(output) {
 #' @import qgraph
 #'
 plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c("included", "inconclusive", "excluded"), ...) {
-
+  if(class(output) != "easybgm"){
+    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+  }
   if(output$model == "dgm-binary"){
     stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates for the Ising model.",
          call. = FALSE)
@@ -190,6 +190,11 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
 #' @import qgraph
 
 plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
+
+  if(class(output) != "easybgm"){
+    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+  }
+
   if(output$model == "dgm-binary"){
     stop("Plot cannot be obtained for 'dgm-binary' models. Use the package bgms instead to obtain parameter estimates.",
          call. = FALSE)
@@ -228,6 +233,9 @@ plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
 
 plot_structure <- function(output, ...) {
 
+  if(class(output) != "easybgm"){
+    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+  }
   graph <- output$structure
 
   # Plot
@@ -245,7 +253,9 @@ plot_structure <- function(output, ...) {
 #' @import ggplot2 HDInterval
 #'
 plot_parameterHDI <- function(output) {
-
+  if(class(output) != "easybgm"){
+    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+  }
   package <- output$package
   if(output$package == "BDgraph" & output$model == "gcgm"){
     stop("Plot cannot be obtained for GCGMs.")
@@ -297,6 +307,11 @@ plot_parameterHDI <- function(output) {
 #'
 
 plot_centrality <- function(output, measure = "Strength"){
+
+  if(class(output) != "easybgm"){
+    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+  }
+
   cent_samples <- output$centrality
   p <- ncol(output$sigma)
   rownames(cent_samples) <- NULL

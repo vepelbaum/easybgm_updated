@@ -165,10 +165,20 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
       bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
     }
     if(ncol(fit$interactions) != nrow(fit$interactions)){
-      bgms_res$sigma <- colMeans(fit$interactions)
-      bgms_res$inc_probs <- colMeans(fit$gamma)
+      p <- unlist(strsplit(colnames(fit$interactions)[ncol(fit$interactions)], ", "))[2]
+      p <- as.numeric(unlist(strsplit(p, ""))[1])
+      bgms_res$sigma <- vector2matrix(colMeans(fit$interactions), p = p)
+      bgms_res$inc_probs <- vector2matrix(colMeans(fit$gamma), p = p)
       bgms_res$BF <- bgms_res$inc_probs/(1-bgms_res$inc_probs)
       bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
+
+      #Obtain structure information
+      bgms_res$posterior_complexity <- table(rowSums(fit$gamma))/nrow(fit$gamma)
+      structures <- apply(fit$gamma, 1, paste0, collapse="")
+      table_structures <- as.data.frame(table(structures))
+      bgms_res$structure_probabilities <- table_structures[,2]/nrow(fit$gamma)
+      bgms_res$graph_weights <- table_structures[,2]
+      bgms_res$sample_graphs <- as.character(table_structures[, 1])
       if(posterior_samples == TRUE){
         bgms_res$samples_posterior <- fit$interactions
       }
@@ -178,10 +188,12 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
       }
     }
 
-
+    bgms_res$model <- "ordinal"
     bgms_res$package <- "bgms"
     output <- bgms_res
   }
+
+  class(output) <- "easybgm"
 
   return(output)
 }
