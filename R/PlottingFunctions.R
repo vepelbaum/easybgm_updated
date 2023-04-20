@@ -11,7 +11,7 @@
 
 plot_posteriorstructure <- function(output, as.BF = FALSE) {
   if(class(output) != "easybgm"){
-    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
   }
   if (output$package == "BGGM") {
     stop("The plot cannot be obtained for BGGM.",
@@ -61,7 +61,7 @@ plot_posteriorstructure <- function(output, as.BF = FALSE) {
 
 plot_posteriorcomplexity <- function(output) {
   if(class(output) != "easybgm"){
-    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
   }
   if (output$package == "BGGM") {
     stop("The plot cannot be obtained for BGGM.",
@@ -108,7 +108,7 @@ plot_posteriorcomplexity <- function(output) {
 #'
 plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c("included", "inconclusive", "excluded"), ...) {
   if(class(output) != "easybgm"){
-    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
   }
   if(output$model == "dgm-binary"){
     stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates for the Ising model.",
@@ -192,7 +192,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
 plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
 
   if(class(output) != "easybgm"){
-    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
   }
 
   if(output$model == "dgm-binary"){
@@ -234,7 +234,7 @@ plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
 plot_structure <- function(output, ...) {
 
   if(class(output) != "easybgm"){
-    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
   }
   graph <- output$structure
 
@@ -254,7 +254,7 @@ plot_structure <- function(output, ...) {
 #'
 plot_parameterHDI <- function(output) {
   if(class(output) != "easybgm"){
-    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
   }
   package <- output$package
   if(output$package == "BDgraph" & output$model == "gcgm"){
@@ -309,7 +309,7 @@ plot_parameterHDI <- function(output) {
 plot_centrality <- function(output, measure = "Strength"){
 
   if(class(output) != "easybgm"){
-    stop("Wrong output type provided. Function requires output of easybgm extract function.")
+    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
   }
 
   cent_samples <- output$centrality

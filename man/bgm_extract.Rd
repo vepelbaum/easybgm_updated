@@ -24,7 +24,7 @@ bgm_extract(
 
 \item{posterior_samples}{if TRUE, the posterior samples will be extracted. Note will significantly increase the computation time for 'BDgraph'.}
 
-\item{not.cont}{only if method = "gcgm" vector indicating the not-continuous variables}
+\item{not.cont}{only if model = "gcgm" vector indicating the not-continuous variables}
 
 \item{data}{if posterior_samples = T, provide the raw data used to estimate the network}
 

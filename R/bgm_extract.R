@@ -4,7 +4,7 @@
 #' @param model type of model estimated, e.g., ggm, gcgm, dgm-binary, Ising, ordinal
 #' @param package package used to obtain the fit object
 #' @param posterior_samples if TRUE, the posterior samples will be extracted. Note will significantly increase the computation time for 'BDgraph'.
-#' @param not.cont only if method = "gcgm" vector indicating the not-continuous variables
+#' @param not.cont only if model = "gcgm" vector indicating the not-continuous variables
 #' @param data if posterior_samples = T, provide the raw data used to estimate the network
 #' @param centrality if TRUE, the centrality samples will be extracted. Note will significantly increase the computation time.
 #'
@@ -21,7 +21,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
       stop("Please specify the type of model estimated with BDgraph (e.g., ggm, gcgm, dgm-binary).",
            call. = FALSE)
     }
-    if(method %in% c("ggm")){
+    if(model %in% c("ggm")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
       bdgraph_res$sigma <- pr2pc(fit$K_hat)
@@ -47,7 +47,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
         }
         # Extract posterior samples
         data<-as.matrix(data)
-        bdgraph_res$samples_posterior <- extract_posterior(fit, data=data, method = method, not.cont)[[1]]
+        bdgraph_res$samples_posterior <- extract_posterior(fit, data=data, method = model, not.cont)[[1]]
 
         if(centrality == TRUE){
           # Centrality indices
@@ -60,7 +60,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
       output <- bdgraph_res
     }
 
-    if(method %in% c("gcgm")){
+    if(model %in% c("gcgm")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
       bdgraph_res$sigma <- pr2pc(fit$K_hat)
@@ -91,7 +91,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
         # }
         # data<-as.matrix(data)
         # # Extract posterior samples
-        # bdgraph_res$samples_posterior <- extract_posterior(fit, data, method = method, not.cont = not.cont)[[1]]
+        # bdgraph_res$samples_posterior <- extract_posterior(fit, data, method = model, not.cont = not.cont)[[1]]
         #
         # if(centrality == TRUE){
         # # Centrality indices
@@ -101,7 +101,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
       }
       output <- bdgraph_res
     }
-    if(method %in% c("dgm-binary")){
+    if(model %in% c("dgm-binary")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
       bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
