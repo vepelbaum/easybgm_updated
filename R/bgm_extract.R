@@ -24,8 +24,8 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
     if(model %in% c("ggm")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
-      bdgraph_res$sigma <- pr2pc(fit$K_hat)
-      diag(bdgraph_res$sigma) <- 0
+      bdgraph_res$parameters <- pr2pc(fit$K_hat)
+      diag(bdgraph_res$parameters) <- 0
       bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
       bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
       bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior /(1-edge.prior))
@@ -63,8 +63,8 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
     if(model %in% c("gcgm")){
       bdgraph_res <- list()
       #Bayesian model-averaged estimates
-      bdgraph_res$sigma <- pr2pc(fit$K_hat)
-      diag(bdgraph_res$sigma) <- 0
+      bdgraph_res$parameters <- pr2pc(fit$K_hat)
+      diag(bdgraph_res$parameters) <- 0
       bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
       bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
       bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior/(1-edge.prior))
@@ -119,8 +119,8 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
   if(package == "BGGM") {
     out_select <- BGGM::select(fit)
     bggm_res <- list()
-    bggm_res$sigma <- out_select$pcor_mat
-    colnames(bggm_res$sigma) <- colnames(fit$Y)
+    bggm_res$parameters <- out_select$pcor_mat
+    colnames(bggm_res$parameters) <- colnames(fit$Y)
     bggm_res$BF <- out_select$BF_10
     bggm_res$inc_probs <- out_select$BF_10/(out_select$BF_10 + 1)
     bggm_res$structure <- out_select$Adj_10
@@ -129,7 +129,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
       posterior_samples <- TRUE
     }
     if(posterior_samples == TRUE){
-      p <- ncol(bggm_res$sigma)
+      p <- ncol(bggm_res$parameters)
       samples <- matrix(0, ncol = p*(p-1)/2, nrow = fit$iter)
       for(i in 1:fit$iter){
         sample <- fit$post_samp$pcors[, , i]
@@ -159,7 +159,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
       if(centrality == TRUE){
         stop("The centrality measures cannot be obtained as the fit object does not contain the posterior samples of bgms that are needed for the computation. Please re-run the bgm function and set save=TRUE.")}
 
-      bgms_res$sigma <- fit$interactions
+      bgms_res$parameters <- fit$interactions
       bgms_res$inc_probs <- fit$gamma
       bgms_res$BF <- fit$gamma/(1-fit$gamma)
       bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
@@ -167,7 +167,7 @@ bgm_extract <- function(fit, package, model = NULL, edge.prior = 0.5, posterior_
     if(ncol(fit$interactions) != nrow(fit$interactions)){
       p <- unlist(strsplit(colnames(fit$interactions)[ncol(fit$interactions)], ", "))[2]
       p <- as.numeric(unlist(strsplit(p, ""))[1])
-      bgms_res$sigma <- vector2matrix(colMeans(fit$interactions), p = p)
+      bgms_res$parameters <- vector2matrix(colMeans(fit$interactions), p = p)
       bgms_res$inc_probs <- vector2matrix(colMeans(fit$gamma), p = p)
       bgms_res$BF <- bgms_res$inc_probs/(1-bgms_res$inc_probs)
       bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)

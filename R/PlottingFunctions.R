@@ -126,7 +126,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
     if(split == F){
       graph[output$inc_probs <= 1] <- 1
       diag(graph) <- 1
-      colnames(graph) <- colnames(output$sigma)
+      colnames(graph) <- colnames(output$parameters)
       qgraph::qgraph(graph,
                      edge.color = graph_color, # specifies the color of the edges
                      ...
@@ -138,7 +138,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
       graph_inc[output$inc_probs >= .5] <- 1
       graph_inc[output$inc_probs < .5] <- 0
       diag(graph_inc) <- 1
-      colnames(graph_inc) <- colnames(output$sigma)
+      colnames(graph_inc) <- colnames(output$parameters)
       qgraph::qgraph(graph_inc,
                      edge.color = graph_color, # specifies the color of the edges
                      ...
@@ -147,7 +147,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
       graph_exc[output$inc_probs >= .5] <- 0
       graph_exc[output$inc_probs < .5] <- 1
       diag(graph_exc) <- 1
-      colnames(graph_exc) <- colnames(output$sigma)
+      colnames(graph_exc) <- colnames(output$parameters)
       qgraph::qgraph(graph_exc,
                      edge.color = graph_color, # specifies the color of the edges
                      ...
@@ -166,7 +166,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
         graph_show[output$BF > (1/evidence_thresh) & output$BF < evidence_thresh] <- 1
       }
       diag(graph_show) <- 1
-      colnames(graph_show) <- colnames(output$sigma)
+      colnames(graph_show) <- colnames(output$parameters)
       qgraph::qgraph(graph_show,
                      edge.color = graph_color, # specifies the color of the edges
                      ...
@@ -200,7 +200,7 @@ plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
          call. = FALSE)
   }
 
-  graph <- output$sigma
+  graph <- output$parameters
 
   # Exclude edges with a inclusion probability lower exc_prob
   inc_probs_m <- output$inc_probs
@@ -267,10 +267,10 @@ plot_parameterHDI <- function(output) {
   hdi_intervals <- as.data.frame(apply(output$samples_posterior, MARGIN = 2, FUN = hdi))
   posterior_medians <- apply(output$samples_posterior, MARGIN = 2, FUN = median)
 
-  names <- colnames(output$sigma)
-  names_bycol <- matrix(rep(names, each = ncol(output$sigma)), ncol = ncol(output$sigma))
-  names_byrow <- matrix(rep(names, each = ncol(output$sigma)), ncol = ncol(output$sigma), byrow = T)
-  names_comb <- matrix(paste0(names_byrow, "-", names_bycol), ncol = ncol(output$sigma))
+  names <- colnames(output$parameters)
+  names_bycol <- matrix(rep(names, each = ncol(output$parameters)), ncol = ncol(output$parameters))
+  names_byrow <- matrix(rep(names, each = ncol(output$parameters)), ncol = ncol(output$parameters), byrow = T)
+  names_comb <- matrix(paste0(names_byrow, "-", names_bycol), ncol = ncol(output$parameters))
   index <- names_comb[upper.tri(names_comb)]
 
   posterior <- cbind(data.frame(posterior_medians, row.names = NULL),
@@ -313,7 +313,7 @@ plot_centrality <- function(output, measure = "Strength"){
   }
 
   cent_samples <- output$centrality
-  p <- ncol(output$sigma)
+  p <- ncol(output$parameters)
   rownames(cent_samples) <- NULL
   # Creating summary statistics
 
@@ -321,7 +321,7 @@ plot_centrality <- function(output, measure = "Strength"){
     as_tibble() %>%
     group_by(Centrality) %>%
     group_modify(~ as.data.frame(colMeans(.x)))
-  centrality_means <- cbind(centrality_means, rep(colnames(output$sigma), 4))
+  centrality_means <- cbind(centrality_means, rep(colnames(output$parameters), 4))
   colnames(centrality_means)[2:3] <- c("value", "node")
   centrality_means <- centrality_means[order(centrality_means$Centrality, centrality_means$node), ]
   centrality_hdi <- cent_samples %>%

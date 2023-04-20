@@ -81,7 +81,7 @@ gwish_samples <- function(G, S, nsamples=1000) {
 # Strength centrality only ## FASTER CODE
 centrality_strength <- function(res){
   Nsamples <- nrow(res$samples_posterior)
-  p <- nrow(res$sigma)
+  p <- nrow(res$parameters)
   strength_samples <- matrix(0, nrow = Nsamples, ncol = p)
   for(i in 1:Nsamples){
     strength_samples[i, ] <- rowSums(abs(vector2matrix(res$samples_posterior[i,], p, bycolumn = T)))
@@ -95,7 +95,7 @@ centrality_strength <- function(res){
 # Strength, betweenness and closeness centrality ## SLOWER CODE
 centrality <- function(res){
   Nsamples <- nrow(res$samples_posterior)
-  p <- as.numeric(nrow(res$sigma))
+  p <- as.numeric(nrow(res$parameters))
   samples <- res$samples_posterior
   for(i in 1:Nsamples){
 
@@ -119,7 +119,7 @@ centrality <- function(res){
                                   rbind(strength_samples, closeness_samples, betweenness_samples, influence_samples))
     }
   }
-  colnames(centrality_samples) <- c("Centrality", colnames(res$sigma))
+  colnames(centrality_samples) <- c("Centrality", colnames(res$parameters))
   centrality_samples <- as.data.frame(centrality_samples)
   centrality_samples[, 2:(p+1)] <- sapply(centrality_samples[, 2:(p+1)], as.numeric)
   return(centrality_samples)
