@@ -1,3 +1,20 @@
+#' Fit a Bayesian analysis of networks
+#'
+#' @param data An n x p matrix or dataframe containing the variables for n independent observations on p variables.
+#' @param type What is the data type? Options: continuos, mixed, ordinal, binary
+#' @param package The R-package that should be used for fitting the network model
+#' @param not.cont If data-type is mixed, a vector of length p, specifying the not-continuous
+#'     variables (1 = not continuous, 0 = continuous)
+#' @param iter number of iterations for the sampler
+#' @param save Logical. Should the posterior samples be obtained (default = FALSE)?
+#' @param centrality Logical. Should the centrality measures be extracted (default = FALSE)?
+#' @param progress Logical. Should a progress bar be shown (default = TRUE)?
+#' @param ... Additional arguments that are handed to the fitting functions of the packages, e.g., informed prior specifications.
+#'
+#' @return
+#' @export
+#'
+#' @examples
 bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, save = FALSE, centrality = FALSE, progress = TRUE, ...){
 
   if(is.null(type)){
@@ -33,16 +50,12 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
     if(type == "continuous"){
       bdgraph_fit <- BDgraph::bdgraph(data=data,               #(M) n*p matrix of responses
                                       method="ggm",           #(M) type of data
-                                      algorithm="rjmcmc",      #(O) type of sampling algorithm
                                       iter=iter,           #(O) no. iterations sampler
                                       save=save,               #(O) Should samples be stored
-                                      burnin=iter/10,      #(O) no. burnin iterations sampler
-                                      g.start = "empty",       #(O) starting point of graph
-                                      df.prior = 3,            #(M) prior: degree of freedom for G-Wishart distribution
-                                      g.prior = 0.5)           #(M) prior: inclusion probability for edges
+                                      g.start = "empty")       #(O) starting point of graph)
 
       # extracting results
-      fit <- bgm_extract(bdgraph_fit, method = "ggm",
+      fit <- bgm_extract(bdgraph_fit, model = "ggm",
                          package = "BDgraph", posterior_samples = save,
                          data = data, centrality = centrality)
     }
@@ -51,17 +64,12 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
       # fitting the model
       bdgraph_fit <- BDgraph::bdgraph(data=data,               #(M) n*p matrix of responses
                                       method="gcgm",           #(M) type of data
-                                      algorithm="rjmcmc",      #(O) type of sampling algorithm
                                       iter=iter,           #(O) no. iterations sampler
                                       save= save,               #(O) Should samples be stored
-                                      burnin=iter/10,      #(O) no. burnin iterations sampler
-                                      g.start = "empty",       #(O) starting point of graph
-                                      not.cont = c(rep(0, 3), rep(1, 10)), #(O) Specifies not continuous variables if method is gcgm
-                                      df.prior = 3,            #(M) prior: degree of freedom for G-Wishart distribution
-                                      g.prior = 0.5)           #(M) prior: inclusion probability for edges
+                                      not.cont = c(rep(0, 3), rep(1, 10))) #(O) Specifies not continuous variables if method is gcgm
 
       # extracting results
-      fit <- bgm_extract(bdgraph_fit, method = "gcgm",
+      fit <- bgm_extract(bdgraph_fit, model = "gcgm",
                          package = "BDgraph", posterior_samples = save,
                          not.cont = not.cont,
                          data = data, centrality = centrality)
@@ -73,8 +81,8 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
                                  iter = iter,
                                  save = save)
     }
-    fit <- bgm_extract(bdgraph_fit, method = "dgm-binary",
-                       package = "BDgraph", posterior_samples = save
+    fit <- bgm_extract(bdgraph_fit, model = "dgm-binary",
+                       package = "BDgraph", posterior_samples = save,
                        data = data, centrality = centrality)
   }
 
@@ -85,7 +93,6 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
     bggm_fit <- BGGM::explore(data,                        #(M) n*p matrix of responses
                               type = type,                 #(O) type of data
                               mixed_type = not.cont,       #(O) which data should be treated as ranks
-                              prior_sd = 0.25,             #(M) prior distribution standard deviation
                               iter = iter,             #(O) no. iterations sampler
                               progress = progress,            #(O) Should a progress bar be plotted?
                               impute = FALSE,              #(O) Should missings be imputed?
@@ -104,11 +111,6 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
 
     bgms_fit <- bgm(x = data,    #(M) n * p matrix of binary responses
                     iter = iter,        #(O) no. iterations Gibbs sampler
-                    burnin = iter/10,           #(O) no. burnin iterations Gibbs sampler
-                    interaction_prior = c("UnitInfo"), # (O) Type of prior distribution on the interactions
-                    cauchy_scale = 2.5,     #(O) if interaction_prior is "Cauchy", the scale of the cauchy distribution
-                    threshold_alpha = 1,    #(O) prior threshold parameter for the shape of the Beta-distribution
-                    threshold_beta = 1,     #(O) prior threshold parameter for the shape of the Beta-distribution
                     save = save,            #(O) if TRUE, outputs posterior draws
                     display_progress = progress
     )
