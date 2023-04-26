@@ -17,10 +17,7 @@
 #' @examples
 bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, save = FALSE, centrality = FALSE, progress = TRUE, ...){
 
-  if(is.null(type)){
-    stop("Please specify the data type (i.e., continuous, mixed, binary, ordinal) with the 'type' argument.",
-         call. = FALSE)
-  }
+
   if(type == "mixed" & is.null(not.cont)){
     stop("Please provide a binary vector of length p specifying the not continuous variables
          (1 = not continuous, 0 = continuous)",
@@ -30,7 +27,7 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
 
   # Set default values for fitting if package is unspecified
   if(is.null(package)){
-    if(type == "continuos") package <- "BDgraph"
+    if(type == "continuous") package <- "BDgraph"
     if(type == "mixed") package <- "BDgraph"
     if(type == "ordinal") package <- "bgms"
     if(type == "binary") package <- "bgms"
@@ -39,7 +36,7 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
   if((package == "bgms") & (type %in% c("continuous", "mixed"))){
     warning("bgms can only fit ordinal or binary datatypes. For continuous or mixed data,
            choose either the BDgraph or BGGM package. By default we have changed the package to BDgraph",
-         call. = FALSE)
+            call. = FALSE)
     package <- "BDgraph"
   }
 
@@ -52,7 +49,8 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
                                       method="ggm",           #(M) type of data
                                       iter=iter,           #(O) no. iterations sampler
                                       save=save,               #(O) Should samples be stored
-                                      g.start = "empty")       #(O) starting point of graph)
+                                      g.start = "empty")#,        #(O) starting point of graph)
+                                     # ...)
 
       # extracting results
       fit <- bgm_extract(bdgraph_fit, model = "ggm",
@@ -66,7 +64,8 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
                                       method="gcgm",           #(M) type of data
                                       iter=iter,           #(O) no. iterations sampler
                                       save= save,               #(O) Should samples be stored
-                                      not.cont = c(rep(0, 3), rep(1, 10))) #(O) Specifies not continuous variables if method is gcgm
+                                      not.cont = c(rep(0, 3), rep(1, 10)), #(O) Specifies not continuous variables if method is gcgm
+                                      ...)
 
       # extracting results
       fit <- bgm_extract(bdgraph_fit, model = "gcgm",
@@ -79,11 +78,13 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
       bdgraph_fit <- bdgraph.mpl(data,
                                  method = "dgm-binary",
                                  iter = iter,
-                                 save = save)
+                                 save = save,
+                                 ...)
+      fit <- bgm_extract(bdgraph_fit, model = "dgm-binary",
+                         package = "BDgraph", posterior_samples = save,
+                         data = data, centrality = centrality)
     }
-    fit <- bgm_extract(bdgraph_fit, model = "dgm-binary",
-                       package = "BDgraph", posterior_samples = save,
-                       data = data, centrality = centrality)
+
   }
 
   #----------------------------------------------------------------------------------
@@ -96,7 +97,8 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
                               iter = iter,             #(O) no. iterations sampler
                               progress = progress,            #(O) Should a progress bar be plotted?
                               impute = FALSE,              #(O) Should missings be imputed?
-                              seed = NULL)                    #(O) Integer for random seed
+                              seed = NULL,                     #(O) Integer for random seed
+                              ...)
 
     # Extracting results
     fit <- bgm_extract(bggm_fit, package = "BGGM",
@@ -108,12 +110,12 @@ bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, sav
   # fitting with bgms
   if(package == "bgms"){
 
-
     bgms_fit <- bgm(x = data,    #(M) n * p matrix of binary responses
                     iter = iter,        #(O) no. iterations Gibbs sampler
                     save = save,            #(O) if TRUE, outputs posterior draws
-                    display_progress = progress
-    )
+                    display_progress = progress,
+                    ...)
+
 
     fit <- bgm_extract(bgms_fit, package = "bgms", posterior_samples = save, centrality = centrality)
   }
