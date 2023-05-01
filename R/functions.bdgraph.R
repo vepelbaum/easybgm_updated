@@ -1,0 +1,174 @@
+# --------------------------------------------------------------------------------------------------
+# 1. Fitting function
+# --------------------------------------------------------------------------------------------------
+
+bgm_fit.bdgraph <- function(fit, ...){
+  if(type == "continuous"){
+    bdgraph_fit <- BDgraph::bdgraph(data=data,               #(M) n*p matrix of responses
+                                    method="ggm",           #(M) type of data
+                                    iter=iter,           #(O) no. iterations sampler
+                                    save=save,               #(O) Should samples be stored
+                                    ...)
+
+    bdgraph_fit$model <- "ggm"
+  }
+  if(type %in% c("mixed", "ordinal")){
+    if(type == "ordinal") not.cont <- rep(1, ncol(data))
+    # fitting the model
+    bdgraph_fit <- BDgraph::bdgraph(data=data,               #(M) n*p matrix of responses
+                                    method="gcgm",           #(M) type of data
+                                    iter=iter,           #(O) no. iterations sampler
+                                    save= save,               #(O) Should samples be stored
+                                    not.cont = c(rep(0, 3), rep(1, 10)), #(O) Specifies not continuous variables if method is gcgm
+                                    ...)
+    bdgraph_fit$model <- "gcgm"
+
+  }
+  if(type == "binary"){
+    bdgraph_fit <- bdgraph.mpl(data,
+                               method = "dgm-binary",
+                               iter = iter,
+                               save = save,
+                               ...)
+    bdgraph_fit$model <- "dgm-binary"
+  }
+  fit <- bdgraph_fit
+
+  class(fit) <- c("BDgraph", "easybgm")
+  return(fit)
+}
+
+
+# --------------------------------------------------------------------------------------------------
+# 2. Extracting results function
+# --------------------------------------------------------------------------------------------------
+
+bgm_extract.bdgraph <- function(fit, model = NULL, edge.prior = 0.5, save = FALSE,
+                                not.cont = NULL, data = NULL, centrality = F){
+  if(is.null(model)){
+    stop("Please specify the type of model estimated with BDgraph (e.g., ggm, gcgm, dgm-binary).",
+         call. = FALSE)
+  }
+  if(model %in% c("ggm")){
+    bdgraph_res <- list()
+    #Bayesian model-averaged estimates
+    bdgraph_res$parameters <- pr2pc(fit$K_hat)
+    diag(bdgraph_res$parameters) <- 0
+    bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
+    bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
+    bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior /(1-edge.prior))
+    bdgraph_res$structure <- 1*(bdgraph_res$inc_probs > 0.5)
+    bdgraph_res$structure_probabilities <- fit$graph_weights/sum(fit$graph_weights)
+    bdgraph_res$graph_weights <- fit$graph_weights
+    bdgraph_res$sample_graph <- fit$sample_graphs
+    # bdgraph_res$package <- "BDgraph"
+    bdgraph_res$model <- "ggm"
+
+    if(centrality == TRUE){
+      save <- TRUE
+    }
+
+    if(save == TRUE){
+      if(is.null(data)){
+        stop("Provide the raw data with the \"data\" argument",
+             call. = FALSE)
+      }
+      # Extract posterior samples
+      data<-as.matrix(data)
+      bdgraph_res$samples_posterior <- extract_posterior(fit, data=data, method = model, not.cont)[[1]]
+
+      if(centrality == TRUE){
+        # Centrality indices
+        #bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
+        bdgraph_res$centrality <- centrality(bdgraph_res)
+      }
+
+    }
+
+    output <- bdgraph_res
+  }
+
+  if(model %in% c("gcgm")){
+    bdgraph_res <- list()
+    #Bayesian model-averaged estimates
+    bdgraph_res$parameters <- pr2pc(fit$K_hat)
+    diag(bdgraph_res$parameters) <- 0
+    bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
+    bdgraph_res$inc_probs  <- bdgraph_res$inc_probs + t(bdgraph_res$inc_probs)
+    bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior/(1-edge.prior))
+    bdgraph_res$structure <- 1*(bdgraph_res$inc_probs > 0.5)
+    bdgraph_res$structure_probabilities <- fit$graph_weights/sum(fit$graph_weights)
+    bdgraph_res$graph_weights <- fit$graph_weights
+    bdgraph_res$sample_graph <- fit$sample_graphs
+    # bdgraph_res$package <- "BDgraph"
+    bdgraph_res$model <- "gcgm"
+
+    if(centrality == TRUE){
+      save <- TRUE
+    }
+    if(save == TRUE){
+      stop("Posterior samples cannot be extracted for GCGMs at the moment.")
+
+      # if(is.null(not.cont)){
+      #   stop("Specify a vector indicating variables are continuos with the not.cont argument (1 indicates not continuous)",
+      #        call. = FALSE)
+      # }
+      # if(is.null(data)){
+      #   stop("Provide the raw data with the \"data\" argument",
+      #        call. = FALSE)
+      # }
+      # data<-as.matrix(data)
+      # # Extract posterior samples
+      # bdgraph_res$samples_posterior <- extract_posterior(fit, data, method = model, not.cont = not.cont)[[1]]
+      #
+      # if(centrality == TRUE){
+      # # Centrality indices
+      # # bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
+      # bdgraph_res$centrality <- centrality(bdgraph_res)
+      # }
+    }
+    output <- bdgraph_res
+  }
+  if(model %in% c("dgm-binary")){
+    bdgraph_res <- list()
+    #Bayesian model-averaged estimates
+    bdgraph_res$inc_probs <- as.matrix(BDgraph::plinks(fit))
+    bdgraph_res$BF <- (bdgraph_res$inc_probs / (1 - bdgraph_res$inc_probs))/(edge.prior/(1-edge.prior))
+    # bdgraph_res$package <- "BDgraph"
+    bdgraph_res$model <- "dgm-binary"
+
+    if(save == TRUE){
+      warning("Posterior samples cannot be obtained for \"dgm-binary\". Solely the aggregated results are extracted.",
+           call. = FALSE)
+    }
+    output <- bdgraph_res
+  }
+  return(output)
+}
+
+# --------------------------------------------------------------------------------------------------
+# 3. Plotting function
+# --------------------------------------------------------------------------------------------------
+
+# a. Plot Posterior Structure Probability
+# --------------------------------------------------------------------------------------------------
+
+# b. Plot Posterior Structure Complexity
+# --------------------------------------------------------------------------------------------------
+
+# c. Edge Evidence Plot
+# --------------------------------------------------------------------------------------------------
+
+# d. Network Plot
+# --------------------------------------------------------------------------------------------------
+
+# e. Structure Plot
+# --------------------------------------------------------------------------------------------------
+
+# f. Plot Interaction Parameters and 95% HDI
+# --------------------------------------------------------------------------------------------------
+
+# g. Centrality Plot
+# --------------------------------------------------------------------------------------------------
+
+
