@@ -15,11 +15,14 @@
 #'
 #' @return
 #' @export
+#'
 #' @import bgms
 #' @import BDgraph
 #' @import BGGM
 #'
 #' @examples
+#'
+
 easybgm <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4,
                     save = FALSE, centrality = FALSE, progress = TRUE,
                     edge.prior = 0.5, ...){
