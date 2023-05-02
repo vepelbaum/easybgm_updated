@@ -1,6 +1,6 @@
 # easybgm: Easy Bayesian Graphical Modeling
 
-The `R` package `easybgm` provides a user-friendly tools to adopt a Bayesian analysis of networks. In particular, it helps fitting, extracting and visualizing the results of a Bayesian graphical model commonly found in psychology. Until now, the package supports fitting and extracting results of cross-sectional network models using `BDgraph`, `BGGM`, `bgms`. WThe package allows to extract the parameter estimates, posterior inclusion probability, inclusion Bayes factor and the posterior density of the parameters.
+The `R` package `easybgm` provides a user-friendly pacakge to conduct a Bayesian analysis of networks. In particular, it helps fitting, extracting and visualizing the results of a Bayesian graphical model commonly found in psychology. Until now, the package supports fitting and extracting results of cross-sectional network models using `BDgraph`, `BGGM`, `bgms`. The package extracts the parameter estimates, posterior inclusion probability, inclusion Bayes factor and the posterior density of the parameters.
 
 ## Installation
 

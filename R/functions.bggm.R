@@ -2,7 +2,8 @@
 # 1. Fitting function
 # --------------------------------------------------------------------------------------------------
 
-bgm_fit.bggm <- function(fit, ...){
+bgm_fit.package_bggm <- function(fit, type, data, iter, save,
+                                 not.cont, centrality, progress, ...){
 
   # Fit the model
   bggm_fit <- BGGM::explore(data,                        #(M) n*p matrix of responses
@@ -13,9 +14,9 @@ bgm_fit.bggm <- function(fit, ...){
                             impute = FALSE,              #(O) Should missings be imputed?
                             seed = NULL,                     #(O) Integer for random seed
                             ...)
-
-  fit <- bggm_fit
-  class(fit) <- c("bggm", "easybgm")
+  fit$model <- type
+  fit$packagefit <- bggm_fit
+  class(fit) <- c("package_bggm", "easybgm")
   return(fit)
 }
 
@@ -25,8 +26,10 @@ bgm_fit.bggm <- function(fit, ...){
 # 2. Extracting results function
 # --------------------------------------------------------------------------------------------------
 
-bgm_extract.bggm <- function(fit, model = NULL, edge.prior = 0.5, save = FALSE,
+bgm_extract.package_bggm <- function(fit, model = NULL, edge.prior = 0.5, save = FALSE,
                              not.cont = NULL, data = NULL, centrality = F){
+  fit <- fit$packagefit
+
   out_select <- BGGM::select(fit)
   bggm_res <- list()
   bggm_res$parameters <- out_select$pcor_mat

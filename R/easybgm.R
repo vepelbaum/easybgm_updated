@@ -37,17 +37,17 @@ easybgm <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4,
 
   # Set default values for fitting if package is unspecified
   if(is.null(package)){
-    if(type == "continuous") package <- "BDgraph"
-    if(type == "mixed") package <- "BDgraph"
-    if(type == "ordinal") package <- "bgms"
-    if(type == "binary") package <- "bgms"
+    if(type == "continuous") package <- "package_bdgraph"
+    if(type == "mixed") package <- "package_bdgraph"
+    if(type == "ordinal") package <- "package_bgms"
+    if(type == "binary") package <- "package_bgms"
   }
 
   if((package == "bgms") & (type %in% c("continuous", "mixed"))){
     warning("bgms can only fit ordinal or binary datatypes. For continuous or mixed data,
            choose either the BDgraph or BGGM package. By default we have changed the package to BDgraph",
             call. = FALSE)
-    package <- "BDgraph"
+    package <- "package_bdgraph"
   }
 
 
@@ -55,14 +55,15 @@ easybgm <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4,
   class(fit) <- c(package, "easybgm")
 
   # Fit the model
-  tryCatch(
-    {fit <- bgm_fit(fit, data = data, type = type, not.cont = not.cont, iter = iter,
+  # tryCatch(
+    # {
+      fit <- bgm_fit(fit, data = data, type = type, not.cont = not.cont, iter = iter,
                     save = save, centrality = centrality, progress = progress, ...)
-    },
-    error = function(e){
-      # If an error occurs, stop running the code
-      stop("Error: ", e$message)
-    })
+    # },
+    # error = function(e){
+    #   # If an error occurs, stop running the code
+    #   stop("Error: ", e$message)
+    # })
 
   # Extract the results
   res <- bgm_extract(fit, model = fit$model,

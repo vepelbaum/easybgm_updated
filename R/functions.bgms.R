@@ -2,7 +2,8 @@
 # 1. Fitting function
 # --------------------------------------------------------------------------------------------------
 
-bgm_fit.bgms <- function(fit, ...){
+bgm_fit.package_bgms <- function(fit, type, data, iter, save,
+                                 not.cont, centrality, progress, ...){
 
   if(save == FALSE & centrality == TRUE){
     warning("The centrality measures can only be obtained if the posterior samples are saved. Note that we automatically set
@@ -15,9 +16,9 @@ bgm_fit.bgms <- function(fit, ...){
                   save = save,            #(O) if TRUE, outputs posterior draws
                   display_progress = progress,
                   ...)
-
-  fit <- bgms_fit
-  class(fit) <- c("bgms", "easybgm")
+  fit$model <- "ordinal"
+  fit$packagefit <- bgms_fit
+  class(fit) <- c("package_bgms", "easybgm")
   return(fit)
 }
 
@@ -27,8 +28,9 @@ bgm_fit.bgms <- function(fit, ...){
 # --------------------------------------------------------------------------------------------------
 # 2. Extracting results function
 # --------------------------------------------------------------------------------------------------
-bgm_extract.bgms <- function(fit, edge.prior = 0.5, save = FALSE,
-                             not.cont = NULL, data = NULL, centrality = F){
+bgm_extract.package_bgms <- function(fit, model, edge.prior = 0.5, save = FALSE,
+                                     not.cont = NULL, data = NULL, centrality = F){
+  fit <- fit$packagefit
   bgms_res <- list()
   if(save == TRUE){
 
