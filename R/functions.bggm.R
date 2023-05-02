@@ -26,8 +26,8 @@ bgm_fit.package_bggm <- function(fit, type, data, iter, save,
 # 2. Extracting results function
 # --------------------------------------------------------------------------------------------------
 
-bgm_extract.package_bggm <- function(fit, model = NULL, edge.prior = 0.5, save = FALSE,
-                             not.cont = NULL, data = NULL, centrality = F){
+bgm_extract.package_bggm <- function(fit, model, edge.prior, save,
+                                     not.cont, data, centrality, ...){
   fit <- fit$packagefit
 
   out_select <- BGGM::select(fit)

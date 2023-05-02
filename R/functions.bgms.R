@@ -16,7 +16,7 @@ bgm_fit.package_bgms <- function(fit, type, data, iter, save,
                   save = save,            #(O) if TRUE, outputs posterior draws
                   display_progress = progress,
                   ...)
-  fit$model <- "ordinal"
+  fit$model <- type
   fit$packagefit <- bgms_fit
   class(fit) <- c("package_bgms", "easybgm")
   return(fit)
@@ -28,18 +28,18 @@ bgm_fit.package_bgms <- function(fit, type, data, iter, save,
 # --------------------------------------------------------------------------------------------------
 # 2. Extracting results function
 # --------------------------------------------------------------------------------------------------
-bgm_extract.package_bgms <- function(fit, model, edge.prior = 0.5, save = FALSE,
-                                     not.cont = NULL, data = NULL, centrality = F){
+bgm_extract.package_bgms <- function(fit, model, edge.prior, save,
+                                     not.cont, data, centrality, ...){
   fit <- fit$packagefit
   bgms_res <- list()
-  if(save == TRUE){
+  if(save == FALSE){
 
     bgms_res$parameters <- fit$interactions
     bgms_res$inc_probs <- fit$gamma
     bgms_res$BF <- fit$gamma/(1-fit$gamma)
     bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
   }
-  if(ncol(fit$interactions) != nrow(fit$interactions)){
+  if(save == TRUE){
     p <- unlist(strsplit(colnames(fit$interactions)[ncol(fit$interactions)], ", "))[2]
     p <- as.numeric(unlist(strsplit(p, ""))[1])
     bgms_res$parameters <- vector2matrix(colMeans(fit$interactions), p = p)
@@ -54,15 +54,13 @@ bgm_extract.package_bgms <- function(fit, model, edge.prior = 0.5, save = FALSE,
     bgms_res$structure_probabilities <- table_structures[,2]/nrow(fit$gamma)
     bgms_res$graph_weights <- table_structures[,2]
     bgms_res$sample_graphs <- as.character(table_structures[, 1])
-    if(save == TRUE){
-      bgms_res$samples_posterior <- fit$interactions
-    }
+    bgms_res$samples_posterior <- fit$interactions
     if(centrality == TRUE){
       #bgms_res$centrality_strength <- centrality_strength(bgms_res)
       bgms_res$centrality <- centrality(bgms_res)
     }
   }
-
+  bgms_res$model <- model
   output <- bgms_res
   return(output)
 }

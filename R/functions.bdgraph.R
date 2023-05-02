@@ -44,8 +44,8 @@ bgm_fit.package_bdgraph <- function(fit, type, data, iter, save,
 # 2. Extracting results function
 # --------------------------------------------------------------------------------------------------
 
-bgm_extract.package_bdgraph <- function(fit, model = NULL, edge.prior = 0.5, save = FALSE,
-                                not.cont = NULL, data = NULL, centrality = F){
+bgm_extract.package_bdgraph <- function(fit, model, edge.prior, save,
+                                not.cont, data, centrality, ...){
   if(is.null(model)){
     stop("Please specify the type of model estimated with BDgraph (e.g., ggm, gcgm, dgm-binary).",
          call. = FALSE)
