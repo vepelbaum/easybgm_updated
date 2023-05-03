@@ -71,10 +71,6 @@ bgm_extract.package_bdgraph <- function(fit, model, edge.prior, save,
     }
 
     if(save == TRUE){
-      if(is.null(data)){
-        stop("Provide the raw data with the \"data\" argument",
-             call. = FALSE)
-      }
       # Extract posterior samples
       data<-as.matrix(data)
       bdgraph_res$samples_posterior <- extract_posterior(fit, data=data, method = model, not.cont)[[1]]
@@ -145,30 +141,4 @@ bgm_extract.package_bdgraph <- function(fit, model, edge.prior, save,
   }
   return(output)
 }
-
-# --------------------------------------------------------------------------------------------------
-# 3. Plotting function
-# --------------------------------------------------------------------------------------------------
-
-# a. Plot Posterior Structure Probability
-# --------------------------------------------------------------------------------------------------
-
-# b. Plot Posterior Structure Complexity
-# --------------------------------------------------------------------------------------------------
-
-# c. Edge Evidence Plot
-# --------------------------------------------------------------------------------------------------
-
-# d. Network Plot
-# --------------------------------------------------------------------------------------------------
-
-# e. Structure Plot
-# --------------------------------------------------------------------------------------------------
-
-# f. Plot Interaction Parameters and 95% HDI
-# --------------------------------------------------------------------------------------------------
-
-# g. Centrality Plot
-# --------------------------------------------------------------------------------------------------
-
 

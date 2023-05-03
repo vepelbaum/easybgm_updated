@@ -7,14 +7,15 @@
 #'
 #' @export
 #' @import ggplot2
+#' @import dplyr
 #'
 
 plot_posteriorstructure <- function(output, as.BF = FALSE) {
-  if(class(output) != "easybgm"){
-    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
+  if(!any(class(output) == "easybgm")){
+    stop("Wrong input provided. The function requires as input the output of the easybgm function.")
   }
-  if (output$package == "BGGM") {
-    stop("The plot cannot be obtained for BGGM.",
+  if (any(class(output) == "package_bggm")) {
+    stop("The plot cannot be obtained for models estimated with BGGM. Suggestion: Change the package to BDgraph.",
          call. = FALSE)
   }
 
@@ -60,11 +61,11 @@ plot_posteriorstructure <- function(output, as.BF = FALSE) {
 #'
 
 plot_posteriorcomplexity <- function(output) {
-  if(class(output) != "easybgm"){
-    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
+  if(!any(class(output) == "easybgm")){
+    stop("Wrong input provided. The function requires as input the output of the easybgm function.")
   }
-  if (output$package == "BGGM") {
-    stop("The plot cannot be obtained for BGGM.",
+  if (any(class(output) == "package_bggm")) {
+    stop("The plot cannot be obtained for models estimated with BGGM. Suggestion: Change the package to BDgraph.",
          call. = FALSE)
   }
   complexity <- c()
@@ -107,8 +108,8 @@ plot_posteriorcomplexity <- function(output) {
 #' @import qgraph
 #'
 plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c("included", "inconclusive", "excluded"), ...) {
-  if(class(output) != "easybgm"){
-    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
+  if(!any(class(output) == "easybgm")){
+    stop("Wrong input provided. The function requires as input the output of the easybgm function.")
   }
   if(output$model == "dgm-binary"){
     stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates for the Ising model.",
@@ -190,11 +191,9 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
 #' @import qgraph
 
 plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
-
-  if(class(output) != "easybgm"){
-    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
+  if(!any(class(output) == "easybgm")){
+    stop("Wrong input provided. The function requires as input the output of the easybgm function.")
   }
-
   if(output$model == "dgm-binary"){
     stop("Plot cannot be obtained for 'dgm-binary' models. Use the package bgms instead to obtain parameter estimates.",
          call. = FALSE)
@@ -233,8 +232,8 @@ plot_network <- function(output, exc_prob = .5, dashed = F, ...) {
 
 plot_structure <- function(output, ...) {
 
-  if(class(output) != "easybgm"){
-    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
+  if(!any(class(output) == "easybgm")){
+    stop("Wrong input provided. The function requires as input the output of the easybgm function.")
   }
   graph <- output$structure
 
@@ -253,15 +252,13 @@ plot_structure <- function(output, ...) {
 #' @import ggplot2 HDInterval
 #'
 plot_parameterHDI <- function(output) {
-  if(class(output) != "easybgm"){
-    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
+
+  if(!any(class(output) == "easybgm")){
+    stop("Wrong input provided. The function requires as input the output of the easybgm function.")
   }
-  package <- output$package
-  if(output$package == "BDgraph" & output$model == "gcgm"){
-    stop("Plot cannot be obtained for GCGMs.")
-  }
+
   if(is.null(output$samples_posterior)){
-    stop("Samples of the posterior distribution required. When extracting the results, set \"posterior_samples = TRUE\".")
+    stop("Samples of the posterior distribution required. When estimating the model, set \"save = TRUE\".")
   }
 
   hdi_intervals <- as.data.frame(apply(output$samples_posterior, MARGIN = 2, FUN = hdi))
@@ -304,12 +301,18 @@ plot_parameterHDI <- function(output) {
 #' @param measure Centrality measures that should be plotted. Users can choose "all" or a subsection of the list: "Strength", "Closeness", "Betweenness", or "ExpectedInfluence"
 #'
 #' @export
+#' @import tibble
+#' @import tidyr
 #'
 
 plot_centrality <- function(output, measure = "Strength"){
 
-  if(class(output) != "easybgm"){
-    stop("Wrong input provided. Function requires the output of the easybgm extract function.")
+  if(!any(class(output) == "easybgm")){
+    stop("Wrong input provided. The function requires as input the output of the easybgm function.")
+  }
+
+  if(is.null(output$centrality)){
+    stop("Centrality results are required. When estimating the model, set \"centrality = TRUE\".")
   }
 
   cent_samples <- output$centrality
@@ -328,10 +331,12 @@ plot_centrality <- function(output, measure = "Strength"){
     as_tibble() %>%
     group_by(Centrality) %>%
     group_modify(~ as.data.frame(hdi(.x, allowSplit = F)))
+  firstnode <- colnames(output$parameters)[1]
+  lastnode <- colnames(output$parameters)[nrow(output$parameters)]
   centrality_hdi <- centrality_hdi %>%
-    gather(node, value, stress:uncreative) %>%
-    add_column(interval = rep(c("lower", "upper"), p*4)) %>%
-    spread(interval, value)
+    gather(node, value, firstnode:lastnode) %>%
+    tibble::add_column(interval = rep(c("lower", "upper"), p*4)) %>%
+    tidyr::spread(interval, value)
 
   centrality_summary <- merge(centrality_hdi, centrality_means, all = T)
 
