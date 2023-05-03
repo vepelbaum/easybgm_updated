@@ -104,7 +104,7 @@ bgm_extract.package_bdgraph <- function(fit, model, edge.prior, save,
       save <- TRUE
     }
     if(save == TRUE){
-      stop("Posterior samples cannot be extracted for GCGMs at the moment.")
+      warning("Posterior samples cannot be extracted for mixed models with BDgraph at the moment. Results are provided without the posterior samples.")
 
       # if(is.null(not.cont)){
       #   stop("Specify a vector indicating variables are continuos with the not.cont argument (1 indicates not continuous)",

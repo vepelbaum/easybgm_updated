@@ -298,7 +298,8 @@ plot_parameterHDI <- function(output) {
 #' Plot centrality measures and 95% highest density interval
 #'
 #' @param output Output object from the bgm_extract function
-#' @param measure Centrality measures that should be plotted. Users can choose "all" or a subsection of the list: "Strength", "Closeness", "Betweenness", or "ExpectedInfluence"
+#' @param measure Centrality measures that should be plotted. Users can choose "all" or a
+#'        subselection of the list: "Strength", "Closeness", "Betweenness", or "ExpectedInfluence"
 #'
 #' @export
 #' @import tibble
@@ -341,10 +342,10 @@ plot_centrality <- function(output, measure = "Strength"){
   centrality_summary <- merge(centrality_hdi, centrality_means, all = T)
 
   measure_options <- c("all", "Betweenness", "Closeness", "ExpectedInfluence", "Strength")
-  if((measure %in% measure_options) == FALSE) {
+  if(any((measure %in% measure_options) == FALSE)) {
     stop("This centrality measure cannot be plotted. Please choose one or several of the following measures: Betweenness, Closeness, ExpectedInfluence, Strength.")
   }
-  if(measure == "all"){
+  if(any(measure == "all")){
     measure <- c("Betweenness", "Closeness", "ExpectedInfluence", "Strength")
   }
   centrality_summary %>%
