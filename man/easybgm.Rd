@@ -40,6 +40,64 @@ variables (1 = not continuous, 0 = continuous)}
 
 \item{...}{Additional arguments that are handed to the fitting functions of the packages, e.g., informed prior specifications.}
 }
+\value{
+The returned object of \code{easybgm} contains a lot of information that
+is used for visualizing and interpreting the results of a Bayesian analysis of network.
+The output includes:
+
+\itemize{
+
+\item \code{parameters} A p x p matrix containing partial associations.
+
+\item \code{inc_probs} A p x p matrix containing the posterior inclusion probabilities.
+
+\item \code{BF} A p x p matrix containing the posterior inclusion Bayes factors.
+
+\item \code{structure} Adjacency matrix of the median probability model (i.e., edges with a posterior probability larger 0.5).
+}
+
+In addition, for \code{BDgraph} and \code{bgms}, the function returns:
+
+\itemize{
+
+\item \code{structure_probabilities} A vector containing the posterior probabilities of all visited structures, between 0 and 1.
+
+\item \code{graph_weights} A vector containing the number of times a particular structure was visited.
+
+\item \code{sample_graphs} A vector containing the indexes of a particular structure.
+}
+
+For all packages, when setting \code{save = TRUE} and \code{centrality = TRUE}, the function will return the following objects respectively:
+
+\itemize{
+
+\item \code{samples_posterior} A k x iter matrix containing the posterior samples for each parameter (i.e., k = p/(p-1)) at each iteration (i.e., iter) of the sampler.
+
+\item \code{centrality} A p x iter matrix containing the centrality of a node at each iteration of the sampler.
+}
+}
 \description{
-Fit a Bayesian analysis of networks
+Easy estimation of a Bayesian analysis of networks to obtain conditional (in)dependence relations between several variables.
+}
+\examples{
+\donttest{
+
+library(easybgm)
+library(bgms)
+
+data <- Wenchuan
+
+# Fitting the Wenchuan PTSD data
+
+fit <- easybgm(data, type = "ordinal",
+                iter = 1000 # note for demonstrative purposes, normally 1e5 is recommended
+                )
+
+# To extract the posterior parameter distribution
+# and centrality measures
+
+fit <- easybgm(data, type = "ordinal",
+                iter = 1000, save = TRUE,
+                centrality = TRUE)
+}
 }
