@@ -9,7 +9,8 @@ plot_centrality(output, measure = "Strength")
 \arguments{
 \item{output}{Output object from the bgm_extract function}
 
-\item{measure}{Centrality measures that should be plotted. Users can choose "all" or a subsection of the list: "Strength", "Closeness", "Betweenness", or "ExpectedInfluence"}
+\item{measure}{Centrality measures that should be plotted. Users can choose "all" or a
+subselection of the list: "Strength", "Closeness", "Betweenness", or "ExpectedInfluence"}
 }
 \description{
 Plot centrality measures and 95\% highest density interval
