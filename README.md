@@ -29,6 +29,17 @@ Note that for the data type ordinal and binary, easybgm by default uses `bgms`, 
 ### Visualization
 
 
+#### Edge Evidence Plot 
+
+In the edge evidence plot, edges represent the inclusion Bayes factor $\text{BF}_{10}$. The edge evidence plot aids researchers in deciding which edges provide robust inferential conclusions: red edges indicate evidence for edge absence (i.e., conditional independence), grey edges indicate the absence of evidence, and blue edges indicate evidence for edge presence (i.e., conditional dependence).
+
+#### Network Plot
+
+#### Structure Plots
+
+#### 95 \% Highest Density Intervals of the Posterior Parameter Distribution
+
+#### Centrality Plot
 
 ## Example
 
