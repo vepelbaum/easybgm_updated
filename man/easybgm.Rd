@@ -26,9 +26,9 @@ easybgm(
 default values are specified depending on the datatype.}
 
 \item{not.cont}{If data-type is mixed, a vector of length p, specifying the not-continuous
-variables (1 = not continuous, 0 = continuous)}
+variables (1 = not continuous, 0 = continuous).}
 
-\item{iter}{number of iterations for the sampler}
+\item{iter}{number of iterations for the sampler.}
 
 \item{save}{Logical. Should the posterior samples be obtained (default = FALSE)?}
 
@@ -77,7 +77,7 @@ For all packages, when setting \code{save = TRUE} and \code{centrality = TRUE}, 
 }
 }
 \description{
-Easy estimation of a Bayesian analysis of networks to obtain conditional (in)dependence relations between several variables.
+Easy estimation of a Bayesian analysis of networks to obtain conditional (in)dependence relations between variables in a network.
 }
 \examples{
 \donttest{

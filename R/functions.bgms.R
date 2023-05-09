@@ -35,16 +35,18 @@ bgm_extract.package_bgms <- function(fit, model, edge.prior, save,
   if(save == FALSE){
 
     bgms_res$parameters <- fit$interactions
+    colnames(bgms_res$parameters) <- rownames(bgms_res$parameters) <- colnames(data)
     bgms_res$inc_probs <- fit$gamma
     bgms_res$BF <- fit$gamma/(1-fit$gamma)
     bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
   }
   if(save == TRUE){
     p <- unlist(strsplit(colnames(fit$interactions)[ncol(fit$interactions)], ", "))[2]
-    p <- as.numeric(unlist(strsplit(p, ""))[1])
+    p <- as.numeric(unlist(strsplit(p, ")"))[1])
     bgms_res$parameters <- vector2matrix(colMeans(fit$interactions), p = p)
+    colnames(bgms_res$parameters) <- rownames(bgms_res$parameters) <- colnames(data)
     bgms_res$inc_probs <- vector2matrix(colMeans(fit$gamma), p = p)
-    bgms_res$BF <- bgms_res$inc_probs/(1-bgms_res$inc_probs)
+    bgms_res$BF <- (bgms_res$inc_probs/(1-bgms_res$inc_probs))/(edge.prior /(1-edge.prior))
     bgms_res$structure <- 1*(bgms_res$inc_probs > 0.5)
 
     #Obtain structure information
