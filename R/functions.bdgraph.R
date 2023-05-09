@@ -104,25 +104,23 @@ bgm_extract.package_bdgraph <- function(fit, model, edge.prior, save,
       save <- TRUE
     }
     if(save == TRUE){
-      warning("Posterior samples cannot be extracted for mixed models with BDgraph at the moment. Results are provided without the posterior samples.")
+      #warning("Posterior samples cannot be extracted for mixed models with BDgraph at the moment. Results are provided without the posterior samples.")
 
-      # if(is.null(not.cont)){
-      #   stop("Specify a vector indicating variables are continuos with the not.cont argument (1 indicates not continuous)",
-      #        call. = FALSE)
-      # }
-      # if(is.null(data)){
-      #   stop("Provide the raw data with the \"data\" argument",
-      #        call. = FALSE)
-      # }
-      # data<-as.matrix(data)
-      # # Extract posterior samples
-      # bdgraph_res$samples_posterior <- extract_posterior(fit, data, method = model, not.cont = not.cont)[[1]]
-      #
-      # if(centrality == TRUE){
-      # # Centrality indices
-      # # bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
-      # bdgraph_res$centrality <- centrality(bdgraph_res)
-      # }
+      if(is.null(not.cont)){
+        stop("Specify a vector indicating variables are continuos with the not.cont argument (1 indicates not continuous)",
+             call. = FALSE)
+      }
+
+      data <- as.matrix(data)
+
+      # Extract posterior samples
+      bdgraph_res$samples_posterior <- extract_posterior(fit, data, method = model, not.cont = not.cont)[[1]]
+
+      if(centrality == TRUE){
+      # Centrality indices
+      # bdgraph_res$centrality_strength <- centrality_strength(bdgraph_res)
+      bdgraph_res$centrality <- centrality(bdgraph_res)
+      }
     }
     output <- bdgraph_res
   }

@@ -2,7 +2,7 @@
 
 DISCLAIMER: The package is still undergoing rapid development and changes to functions or arguments may occur. 
 
-The `R` package `easybgm` provides a user-friendly package for performing a Bayesian analysis of psychometric networks. In particular, it helps to fit, extract, and visualize the results of a Bayesian graphical model commonly used in the social-behavioral sciences. The package is a wrapper around existing packages. So far, the package supports fitting and extracting results of cross-sectional network models using `BDgraph` (Mohammadi \& Wit, 2015), `BGGM`(Williams \& Mulder, 2019), `bgms` (Marsman \& Haslbeck, 2023). As output, the package extracts the parameter estimates, the posterior inclusion probability, the inclusion Bayes factor, and optionally posterior samples of the parameters and the centrality. The package furthermore provides an extensive suite of visualization functions. 
+The `R` package `easybgm` provides a user-friendly package for performing a Bayesian analysis of psychometric networks. In particular, it helps to fit, extract, and visualize the results of a Bayesian graphical model commonly used in the social-behavioral sciences. The package is a wrapper around existing packages. So far, the package supports fitting and extracting results of cross-sectional network models using `BDgraph` (Mohammadi \& Wit, 2015), `BGGM`(Williams \& Mulder, 2019), and `bgms` (Marsman \& Haslbeck, 2023). As output, the package extracts the posterior parameter estimates, the posterior inclusion probability, the inclusion Bayes factor, and optionally posterior samples of the parameters and the nodes centrality. The package comes with an extensive suite of visualization functions. 
 
 ## Installation
 
@@ -24,43 +24,37 @@ remotes::install_github("KarolineHuth/easybgm", ref = "developer")
 
 ### Estimation
 
-For the estimation, our package builds wrapper functions around existing R packages (i.e., `BDgraph`, `bgms`, and `BGGM`). To initiate estimation, researchers specify the data set and the data type (i.e., continuous, mixed, ordinal, or binary). Based on the data type specification, `easybgm` estimates the network using the appropriate R package (i.e., `BDgraph` for continuous and mixed data, and `bgms` for ordinal and binary data). Users can deviate from the default package choice by specifying their preferred R package with the `package` argument. Based on the different estimates, `easybgm` outputs the results, including the parameter estimates, the posterior inclusion probability, the inclusion Bayes factor, and optionally the posterior samples of the parameters as well as strength centrality samples.
+The package consists of wrapper functions around existing R packages (i.e., `BDgraph`, `bgms`, and `BGGM`). To initiate estimation, researchers must specify the data set and the data type (i.e., continuous, mixed, ordinal, or binary). Based on the data type specification, `easybgm` estimates the network using the appropriate R package (i.e., `BDgraph` for continuous and mixed data, and `bgms` for ordinal and binary data). Users can override the default package selection by specifying their preferred R package with the `package` argument. All other arguments, such as package-specific informed prior specifications, can be passed to `easybgm`. As output, `easybgm` returns the posterior parameter estimates, the posterior inclusion probability, and the inclusion Bayes factor. In addition, the package extracts the posterior samples of the parameters by setting `save = TRUE` and the strength centrality samples by setting `centrality = TRUE`.
 
 ### Visualization
 
-The package comes with an extensive suite to visualize the results of the Bayesian analysis of networks. We provide more information on each of the plots below. The visualization function use `qgraph` (Epskamp et al., 2012) and `ggplot2` (Wickham, 2016) as the backbone for the plots. 
+The package comes with an extensive suite of functions to visualize the results of the Bayesian analysis of networks. We provide more information on each of the plots below. The visualization functions use `qgraph` (Epskamp et al., 2012) or `ggplot2` (Wickham, 2016) as the backbone. 
 
 #### Edge Evidence Plot 
 
-In the edge evidence plot, edges represent the inclusion Bayes factor $\text{BF}_{10}$. The edge evidence plot aids researchers in deciding which edges provide robust inferential conclusions: red edges indicate evidence for edge absence (i.e., conditional independence), grey edges indicate the absence of evidence, and blue edges indicate evidence for edge presence (i.e., conditional dependence).
+The edge evidence plot aids researchers in deciding which edges provide robust inferential conclusions. In the edge evidence plot, edges represent the inclusion Bayes factor $\text{BF}_{10}$. Red edges indicate evidence for edge absence (i.e., conditional independence), grey edges indicate the absence of evidence, and blue edges indicate evidence for edge presence (i.e., conditional dependence). By default, a $\text{BF}_{10} > 10$ is considered strong evidence for inclusion and $\text{BF}_{01} > 10$ for exclusion. Users can specify the threshold for Bayes factors. 
 
 #### Network Plot
 
-In the network plot in which edges indicate the strength of partial association between two nodes. The network plot shows all edges with an inclusion Bayes factor larger than $1$. Edge thickness and saturation represent the strength of the association; the thicker the edge, the stronger the association. Red edges indicate negative relations and blue edges indicate positive associations.
+In the network plot, edges indicate the strength of partial association between two nodes. The network plot shows all edges with an inclusion Bayes factor greater than $1$, i.e. all edges that have some evidence of inclusion. Edge thickness and saturation represent the strength of the association; the thicker the edge, the stronger the association. Red edges indicate negative associations and blue edges indicate positive associations.
 
 #### Structure Plots
 
-!!! EDIT!!!! 
+The structure uncertainty can be assessed with the posterior structure probability plot and the posterior complexity plot. The posterior structure probability plot shows the posterior probabilities of the visited structures, sorted from the most to the least probable. Each dot represents one structure. The more structures with similar posterior probability, the more uncertain the true structure. If one structure dominates the posterior structure probability, we can be relatively certain about the true structure.
 
-Posterior probabilities of the visited structures, sorted from the most to
-the least probable. Each dot represents one structure. The grey dashed line denotes the
-prior probability for each structure. The right plot indicates the posterior probability for
-different structure complexities, where complexity comprises the network density. 
+The posterior complexity plot shows the posterior probability of a structure complexity (i.e., number of present edges in a network). Here, the posterior probability of all structures with the same complexity are aggregated into one plot. 
 
 #### 95 \% Highest Density Intervals of the Posterior Parameter Distribution
 
-The 95 \% highest density interval (HDI) of the parameters is visualized with a parameter forest plot. In the plot, dots represent the median of the posterior samples and the lines indicate the shortest interval that covers 95\% of the posterior distribution. The narrower an interval, the more stable a parameter.  
+The 95 \% highest density intervals (HDI) of the parameters are visualized with a parameter forest plot. In the plot, dots represent the median of the posterior samples and the lines indicate the shortest interval that covers 95\% of the posterior distribution. The narrower an interval, the more stable a parameter.  
 
 #### Centrality Plot
 
-!!! EDIT!!!! 
-
-Researchers often use centrality measures to obtain aggregated information for each node, for example, the connectedness quantified in the strength centrality. Credible intervals for strength centrality can be obtained by calculating the centrality measure for each sample of the posterior distribution. The higher the centrality, the more strongly connected the node; error bars represent the 95\% highest density interval (HDI). 
+Researchers often use centrality measures to obtain aggregated information for each node, such as the connectedness quantified by strength centrality. Credible intervals for strength centrality can be obtained by calculating the centrality measure for each sample of the posterior distribution. The higher the centrality, the more connected the node; error bars represent the 95\% High Density Interval (HDI). 
 
 ## Example
 
-We want to illustrate the package use with an example. In particular, we use the Wenchuan data which can be loaded with 
-the package `bgms`. We fit the model and extract its results with the function `easybgm`. We specify the data and the data type, which in this case is `ordinal`. 
+We want to illustrate the package use with an example. In particular, we use the Wenchuan data which can be loaded with the package `bgms`. We fit the model and extract its results with the function `easybgm`. We specify the data and the data type, which in this case is `ordinal`. 
 
 ```r
 library(easybgm)
@@ -91,7 +85,7 @@ res <- easybgm(data, type = "ordinal", save = TRUE, centrality = TRUE)
 plot_parameterHDI(res)
 ```
 
-Lastly, we can assess the structure specifically with three plots. Note that this only works, if we save the posterior samples and use the model fit of `BDgraph` or `bgms`. 
+Lastly, we can assess the structure specifically with three plots. Note that this only works, if we save the posterior samples and use either the `BDgraph` or `bgms` package. 
 
 ```r
 plot_posteriorstructure(res, as.BF = F)
