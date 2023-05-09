@@ -78,14 +78,7 @@ plot_network(res, layout = "spring",
              theme = "TeamFortress", vsize = 6)
 ```
 
-In addition we can obtain posterior samples from the posterior distribution by setting `save = TRUE` in the `easybgm` function and thereby open up new possibilities of assessing the model. We can extract the posterior density of the parameters with a parameter forest plot. 
-
-```r
-res <- easybgm(data, type = "ordinal", save = TRUE, centrality = TRUE)
-plot_parameterHDI(res)
-```
-
-Lastly, we can assess the structure specifically with three plots. Note that this only works, if we save the posterior samples and use either the `BDgraph` or `bgms` package. 
+We can also assess the structure specifically with three plots. Note that this only works, if we use either the `BDgraph` or `bgms` package. 
 
 ```r
 plot_posteriorstructure(res, as.BF = F)
@@ -93,6 +86,14 @@ plot_posteriorcomplexity(res, as.BF = F)
 plot_structure(res, layoutScale = c(.8,1), palette = "R",
                theme = "TeamFortress", vsize = 6, edge.width = .3, layout = "spring")
 ```
+
+In addition we can obtain posterior samples from the posterior distribution by setting `save = TRUE` in the `easybgm` function and thereby open up new possibilities of assessing the model. We can extract the posterior density of the parameters with a parameter forest plot. 
+
+```r
+res <- easybgm(data, type = "ordinal", save = TRUE, centrality = TRUE)
+plot_parameterHDI(res)
+```
+
 
 Furthermore, researcher can wish to aggregate the findings of the network model, commonly done with centrality measures. Due to the discussion around the meaningfulness of centrality measures in psychometric network models, we recommend users to stick to the strength centrality. To obtain the centrality measures, users need to set `save = TRUE` and `centrality = TRUE`, when estimating the network model with `easybgm`. The centrality measures can be inspected with the centrality plot. 
 
