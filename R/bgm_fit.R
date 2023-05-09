@@ -11,10 +11,7 @@
 #' @param progress Logical. Should a progress bar be shown (default = TRUE)?
 #' @param ... Additional arguments that are handed to the fitting functions of the packages, e.g., informed prior specifications.
 #'
-#' @return
-#' @export
-#'
-#' @examples
+
 bgm_fit <- function(data, type, package = NULL, not.cont = NULL, iter = 1e4, save = FALSE, centrality = FALSE, progress = TRUE, ...){
 
 
