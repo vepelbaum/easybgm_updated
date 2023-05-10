@@ -99,20 +99,17 @@ plot_posteriorcomplexity <- function(output) {
 #' @param output Output object from the bgm_extract function
 #' @param evidence_thresh BF which will be considered sufficient evidence for in-/exclusion
 #' @param split if TRUE, plot is split in included and excluded edges
-#' @param show specifies which edges should be shown, indicated by "included", "inconclusive", "excluded"
+#' @param show specifies which edges should be shown, indicated by "all", "included", "inconclusive", "excluded"
 #' @param ... Additional `qgraph` arguments
 #'
 #' @export
 #' @import qgraph
 #'
-plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c("included", "inconclusive", "excluded"), ...) {
+plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = "all", ...) {
   if(!any(class(output) == "easybgm")){
     stop("Wrong input provided. The function requires as input the output of the easybgm function.")
   }
-  if(output$model == "dgm-binary"){
-    stop("Plot cannot be obtained for 'dgm-binary' models. Use the package rbinnet instead to obtain parameter estimates for the Ising model.",
-         call. = FALSE)
-  }
+
   graph <- output$BF
   diag(graph) <- 1
 
@@ -121,7 +118,7 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
   graph_color <-  ifelse(graph < evidence_thresh & graph > 1/evidence_thresh, graph_color <- "#bfbfbf", graph_color <- "#36648b")
   graph_color[graph < (1/evidence_thresh)] <- "#990000"
 
-  if(length(show) == 3){
+  if(show == "all"){
     if(split == F){
       graph[output$inc_probs <= 1] <- 1
       diag(graph) <- 1
@@ -152,7 +149,8 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
                      ...
       )
     }
-    if(length(show) != 3){
+  }
+    if(show != "all"){
       graph_show <- matrix(0, ncol = ncol(graph), nrow = nrow(graph))
       if("included" %in% show){
         graph_show[output$BF > evidence_thresh] <- 1
@@ -170,7 +168,6 @@ plot_edgeevidence <- function(output, evidence_thresh = 10, split = F, show = c(
                      ...
       )
     }
-  }
 
 }
 
