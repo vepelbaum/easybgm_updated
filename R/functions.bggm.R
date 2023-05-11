@@ -11,7 +11,6 @@ bgm_fit.package_bggm <- function(fit, type, data, iter, save,
                             mixed_type = not.cont,       #(O) which data should be treated as ranks
                             iter = iter,             #(O) no. iterations sampler
                             progress = progress,            #(O) Should a progress bar be plotted?
-                            impute = FALSE,              #(O) Should missings be imputed?
                             seed = NULL,                     #(O) Integer for random seed
                             ...)
   fit$model <- type
